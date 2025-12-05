@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "include": ["../../**/*.ts"],
+  "exclude": [
+    "../../**/*.test.ts",
+    "../../**/__mocks__/**",
+    "../../**/test/**",
+    "../../**/tests/**",
+    "../graphql-admin/**"
+  ],
+  "compilerOptions": {
+    "baseUrl": "../../..",                            /* Specify the base directory to resolve non-relative module names. */
+    "rootDir": "../../../src",                        /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+  }
+}

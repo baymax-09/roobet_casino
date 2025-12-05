@@ -1,0 +1,19 @@
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+{{ if $Values.app.pvc }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+spec:
+  storageClassName: {{ $Values.app.pvc.class }}
+  accessModes:
+    - {{ $Values.app.pvc.accessMode }}
+  resources:
+    requests:
+      storage: {{ $Values.app.pvc.size }}
+
+---
+{{- end }}
+{{- end }}

@@ -1,0 +1,104 @@
+
+crash.png
+size: 1977,857
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+fire/yellow_fire/short/yellow_fire_1
+  rotate: true
+  xy: 1229, 38
+  size: 140, 390
+  orig: 256, 512
+  offset: 59, 53
+  index: -1
+fire/yellow_fire/short/yellow_fire_10
+  rotate: false
+  xy: 1835, 429
+  size: 140, 426
+  orig: 256, 512
+  offset: 59, 17
+  index: -1
+fire/yellow_fire/short/yellow_fire_2
+  rotate: true
+  xy: 2, 2
+  size: 134, 419
+  orig: 256, 512
+  offset: 63, 34
+  index: -1
+fire/yellow_fire/short/yellow_fire_3
+  rotate: true
+  xy: 423, 11
+  size: 125, 388
+  orig: 256, 512
+  offset: 67, 60
+  index: -1
+fire/yellow_fire/short/yellow_fire_4
+  rotate: false
+  xy: 1835, 24
+  size: 140, 403
+  orig: 256, 512
+  offset: 63, 38
+  index: -1
+fire/yellow_fire/short/yellow_fire_5
+  rotate: true
+  xy: 813, 10
+  size: 145, 414
+  orig: 256, 512
+  offset: 66, 24
+  index: -1
+fire/yellow_fire/short/yellow_fire_6
+  rotate: true
+  xy: 1169, 180
+  size: 143, 367
+  orig: 256, 512
+  offset: 69, 56
+  index: -1
+fire/yellow_fire/short/yellow_fire_7
+  rotate: true
+  xy: 2, 138
+  size: 153, 383
+  orig: 256, 512
+  offset: 54, 34
+  index: -1
+fire/yellow_fire/short/yellow_fire_8
+  rotate: true
+  xy: 387, 138
+  size: 153, 359
+  orig: 256, 512
+  offset: 50, 52
+  index: -1
+fire/yellow_fire/short/yellow_fire_9
+  rotate: true
+  xy: 748, 157
+  size: 147, 419
+  orig: 256, 512
+  offset: 54, 38
+  index: -1
+rockets/ships---png_0001_s4
+  rotate: false
+  xy: 1417, 325
+  size: 416, 530
+  orig: 416, 530
+  offset: 0, 0
+  index: -1
+rockets/ships---png_0002_s3
+  rotate: true
+  xy: 424, 306
+  size: 549, 531
+  orig: 549, 531
+  offset: 0, 0
+  index: -1
+rockets/ships---png_0003_s2
+  rotate: false
+  xy: 2, 293
+  size: 420, 562
+  orig: 420, 562
+  offset: 0, 0
+  index: -1
+rockets/ships---png_0004_s1
+  rotate: true
+  xy: 957, 325
+  size: 530, 458
+  orig: 530, 458
+  offset: 0, 0
+  index: -1

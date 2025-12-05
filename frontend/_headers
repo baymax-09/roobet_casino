@@ -1,0 +1,4 @@
+/*
+	X-Frame-Options "DENY";
+	Content-Security-Policy "frame-ancestors 'self' https://*.clevernt.com https://*.cleverwebserver.com https://*.cleverhttp.com;";
+	X-XSS-Protection "1; mode=block";

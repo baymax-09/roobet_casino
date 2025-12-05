@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "1c02269f-e49f-487c-a661-ab1a1d0dc6d8",
+		"name": "Yggdrasil",
+		"description": "This collection supports interacting with the Yggdrasil endpoints in the backend.\n\nPlease review the `variables` and look for `Test` on some of the requests. For instance, the `QA / Get Session Token` request will automatically update the `sessionToken` variable, based on the response.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "978305",
+		"_collection_link": "https://roobet-dark-zodiac.postman.co/workspace/Roobet~f545d6df-6763-4d52-bf19-e01d2f53b7a4/collection/978305-1c02269f-e49f-487c-a661-ab1a1d0dc6d8?action=share&source=collection_link&creator=978305"
+	},
+	"item": [
+		{
+			"name": "QA",
+			"item": [
+				{
+					"name": "Get Session Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const tokenResp = pm.response.json()",
+									"pm.collectionVariables.set('sessionToken', tokenResp.token)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{cookie}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiUrl}}/yggdrasil/qa/token",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"yggdrasil",
+								"qa",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "QA Helpers"
+		},
+		{
+			"name": "Player Info",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{apiUrl}}/yggdrasil/callback/playerinfo.json?org={{org}}&sessiontoken={{sessionToken}}&lang={{lang}}&version={{version}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"yggdrasil",
+						"callback",
+						"playerinfo.json"
+					],
+					"query": [
+						{
+							"key": "org",
+							"value": "{{org}}"
+						},
+						{
+							"key": "sessiontoken",
+							"value": "{{sessionToken}}"
+						},
+						{
+							"key": "lang",
+							"value": "{{lang}}"
+						},
+						{
+							"key": "version",
+							"value": "{{version}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiUrl",
+			"value": "api.pambet.test",
+			"type": "string"
+		},
+		{
+			"key": "cookie",
+			"value": "_ga=GA1.1.2080470815.1714415497; _ga_00JS1BZ93P=GS1.1.1715260950.5.1.1715260990.20.0.0; _ga_W62ERM8Q5Q=GS1.1.1715260950.5.1.1715260990.0.0.0; _gcl_au=1.1.1199928427.1714415496; _dd_s=logs=1&id=cddcba9b-eb79-4049-ad22-9db360fddb72&created=1715260950275&expire=1715261890646; connect.sid=s%3AkW8hkdO-QtCqPtc3UrbfFc4R27egJH3v.IpELirpxEVeBZj73TP3qISDfhOj2tLJqN1HlZwuAxVc; machineSecret=68f6bdb7e6; twofactorRequired=true; userId=1b9c770e-f89a-48d5-bca8-26770877e1ab; rbgrp=gz0",
+			"type": "string"
+		},
+		{
+			"key": "sessionToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "org",
+			"value": "roobet",
+			"type": "string"
+		},
+		{
+			"key": "lang",
+			"value": "en",
+			"type": "string"
+		},
+		{
+			"key": "version",
+			"value": "5",
+			"type": "string"
+		}
+	]
+}

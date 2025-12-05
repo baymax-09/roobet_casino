@@ -1,0 +1,3 @@
+config/k8s/platform-clusters
+.github/gh-actions
+config/chart/*

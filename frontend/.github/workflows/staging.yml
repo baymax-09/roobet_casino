@@ -1,0 +1,82 @@
+name: Staging
+
+on:
+  push:
+    branches: ['staging']
+
+env:
+  build-path: dist
+  build-cache-key: build-staging-${{ github.sha }}
+
+jobs:
+  tag-build:
+    runs-on:
+      group: roobet-runners
+    environment: staging
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Tag current version and build both targets.
+      - name: Tag and build
+        uses: ./.github/actions/tag-build
+        with:
+          build-cache-key: ${{ env.build-cache-key }}
+          build-path: ${{ env.build-path }}
+          config: ${{ toJSON(vars) }}
+          secrets: ${{ toJSON(secrets) }}
+
+  # Can be deleted once S3 deployment is solid af.
+  # app-cloudflare-pages-staging-push:
+  #   needs: [tag-build]
+  #   runs-on:
+  #     group: roobet-runners
+  #   concurrency:
+  #     group: roobet-runners
+  #   steps:
+  #     # Checkout repo at current ref.
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     # Publish both targets to CF Pages.
+  #     - id: cloudflare-pages-push
+  #       name: Cloudflare Pages Push
+  #       uses: ./.github/actions/cloudflare-pages-push
+  #       with:
+  #         build-cache-key: ${{ env.build-cache-key }}
+  #         build-path: ${{ env.build-path }}
+  #         product-pages-name: roobet-staging-product
+  #         acp-pages-name: roobet-staging-acp
+  #         cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  #         cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         branch: main
+
+  s3-bucket-staging-push:
+    name: S3 Bucket Push
+    needs: [tag-build]
+    runs-on:
+      group: roobet-runners
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Publish to S3 Bucket
+      - id: s3-bucket-push
+        name: S3 Bucket Push
+        uses: ./.github/actions/aws-bucket-push
+        with:
+          aws-account: 461710506523
+          aws-region: eu-central-1
+          aws-role: sre-github-non-prod
+          s3-bucket-name-product: roobet-dev-frontend-stage-product
+          s3-bucket-name-acp: roobet-dev-frontend-stage-acp
+          build-path: ${{ env.build-path }}
+          build-cache-key: ${{ env.build-cache-key }}
+          cloudfront-distribution-id-acp: EDYIOQD5YLAUX
+          cloudfront-distribution-id-product: E75LQHV9Z2POX

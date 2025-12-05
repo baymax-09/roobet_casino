@@ -1,0 +1,1 @@
+export const GAME_THUMBNAIL_BORDER_RADIUS = 12

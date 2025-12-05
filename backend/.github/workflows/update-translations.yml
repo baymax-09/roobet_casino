@@ -1,0 +1,50 @@
+name: Update translations
+
+on:
+  schedule:
+    # Runs at 07:00 EST every day
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+env:
+  POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+  DEBUG: ${{ github.runner.debug }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: project-atl/poeditor-translation-update-tool
+          path: update-tool
+          fetch-depth: 1
+          token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+
+      - name: Checkout backend repo
+        uses: actions/checkout@v4
+        with:
+          repository: project-atl/backend
+          path: backend
+          fetch-depth: 0
+          token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+
+      - name: Download the new translation files for the backend
+        run: |
+          cd update-tool
+          npm ci
+          npm run build || true
+          npm run start update-translation-files 499245
+
+      - name: Commit and push the updated translation files
+        run: |
+          git config --global user.email "engineering@roobet.com"
+          git config --global user.name "Roobet Engineering"
+          cd update-tool/499245
+          cp -R *.json ./../../backend/locales/
+          cd ./../../backend
+          git add .
+          git commit -am "chore(i18n): updated translations" --no-verify || echo "No changes to commit."
+          git push --no-verify

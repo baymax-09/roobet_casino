@@ -1,0 +1,33 @@
+export const exampleDepositBonusData = [
+  {
+    userId: '0b1933c4-fcbc-46a9-8635-ba3c510ddc81',
+    username: 'admin',
+    bonusType: 'Fixed',
+    fixedAmount: 50,
+    reason: 'Bonus Fixed',
+    wagerRequirementMultiplier: 10,
+    minDeposit: 25,
+    expirationDate: '2023-10-31T13:01:00Z',
+    override: false,
+  },
+  {
+    userId: '4e99b400-1660-48ef-b361-0fe7767acba4',
+    username: 'user1',
+    bonusType: 'Percent Match',
+    maxMatch: 100,
+    wagerRequirementMultiplier: 2,
+    override: false,
+    percentMatch: 50,
+    minDeposit: 20,
+    reason: 'Bonus',
+  },
+  {
+    userId: '708f548f-6949-419b-9b9a-cf8bd09c3d3e',
+    username: 'priml',
+    bonusType: 'Percent Match',
+    maxMatch: 15,
+    override: false,
+    reason: 'Other - Test',
+    percentMatch: 15,
+  },
+]

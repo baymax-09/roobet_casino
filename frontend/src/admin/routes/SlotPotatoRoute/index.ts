@@ -1,0 +1,6 @@
+export * from './SlotPotatoForm'
+export * from './GamesDataTable'
+export * from './SelectedGames'
+export { ListSlotPotatoRoute } from './ListSlotPotatoRoute'
+export { CreateSlotPotatoRoute } from './CreateSlotPotatoRoute'
+export { EditSlotPotatoRoute } from './EditSlotPotatoRoute'

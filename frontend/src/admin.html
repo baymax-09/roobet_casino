@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link href="https://fonts.googleapis.com/" rel="preconnect" crossorigin />
+    <link href="https://api.roobet.com" rel="preconnect" crossorigin />
+    <title>Roobet | ACP</title>
+    <base href="/" />
+    <meta name="theme-color" content="#191b31" />
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <style>
+      #loader {
+        background: #191939;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      #loader.ready {
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      .spinner {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: conic-gradient(#0000 1%,#DDB440) content-box;
+        -webkit-mask: repeating-conic-gradient(#0000 0deg,#000 1deg 39deg,#0000 40deg 45deg),
+              radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 calc(100% - 9px));
+        -webkit-mask-composite: destination-in;
+        mask-composite: intersect;
+        animation: spinner 1s infinite steps(8);
+      }
+
+      .roo {
+        position: absolute;
+        width: 40px;
+        height: 50px;
+      }
+
+      @keyframes spinner {
+        to {
+            transform: rotate(1turn);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="modalRoot"></div>
+    <div id="loader">
+      <img class="roo" src="/images/Roo.svg" alt="Roo" />
+      <div class="spinner">
+      </div>
+    </div>
+  </body>
+</html>

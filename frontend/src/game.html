@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      http-equiv="Cache-control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Roobet | Crypto's Fastest Growing Casino</title>
+    <script src="http://d1rodvoo1e5ykj.cloudfront.net/main.js"></script>
+    <script>
+      // Unibo settings object
+      const uniboSettings = {
+        theme: 'roobet',
+      }
+      // UniboOverlay is global constructor in window object
+      const uniboOverlay = new UniboOverlay(uniboSettings)
+      // Method to run overlay in game page
+      uniboOverlay.init()
+      window.addEventListener('beforeunload', function (event) {
+        // Kill WebSocket connection and unmount Unibo overlay widget
+        uniboOverlay.unmount()
+      })
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #090c1d;
+      }
+
+      #root {
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+
+      #unibo-overlay {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 100%;
+      }
+
+      /*This will be fetched then rendered inside of the #unibo-overlay*/
+      .overlay-hook {
+        z-index: 2;
+      }
+
+      #game {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      #loader-root {
+        margin: auto;
+        position: fixed;
+        color: #e6be4b;
+        animation: loader-keyframes-circular-rotate 1.4s linear infinite;
+        width: 40px;
+        height: 40px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      .loader-circle {
+        stroke: currentColor;
+        animation: loader-keyframes-circular-dash 1.4s ease-in-out infinite;
+        stroke-dasharray: 80px, 200px;
+        stroke-dashoffset: 0px;
+      }
+
+      /* Media query for phones */
+      @media only screen and (max-width: 600px) {
+        #unibo-overlay {
+          flex-direction: column;
+        }
+      }
+
+      @keyframes loader-keyframes-circular-rotate {
+        0% {
+          transform-origin: 50% 50%;
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes loader-keyframes-circular-dash {
+        0% {
+          stroke-dasharray: 1px, 200px;
+          stroke-dashoffset: 0px;
+        }
+        50% {
+          stroke-dasharray: 100px, 200px;
+          stroke-dashoffset: -15px;
+        }
+        100% {
+          stroke-dasharray: 100px, 200px;
+          stroke-dashoffset: -125px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="loader-root" role="progressbar">
+        <svg viewBox="22 22 44 44">
+          <circle
+            class="loader-circle"
+            cx="44"
+            cy="44"
+            r="20.2"
+            fill="none"
+            stroke-width="3.6"
+          ></circle>
+        </svg>
+      </div>
+      <div id="unibo-overlay">
+        <iframe id="game"></iframe>
+      </div>
+    </div>
+    <script>
+      // Get query string from URL.
+      const search = new URLSearchParams(window.location.search)
+
+      const src = search.get('src')
+
+      if (src) {
+        const iframe = document.querySelector('#game')
+
+        iframe.src = atob(src)
+      }
+
+      const game = document.getElementById('game')
+      const loader = document.getElementById('loader-root')
+
+      // Remove the loading spinner once the game has loaded
+      game.addEventListener('load', () => {
+        loader.remove()
+      })
+    </script>
+  </body>
+</html>

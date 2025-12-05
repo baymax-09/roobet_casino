@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Roobet Hilo API
+  description: |-
+    In our Hilo game, a player attempts to roll the hilo and successfully generate a number that lands on the user's selected payout range.
+    The user selects a payout chance with the slider:
+    - place bet
+    - Win if number lands in range
+    - Lose if number lands outside range
+
+    Hilo varies its own custom difficulties
+    - Moving the slider around will adjust the payout multiplier for better or worse chances of winning
+
+    There are 2 different modes:
+    - 'under': Win if number lands under the target number
+    - 'over': Win if number lands over the target number
+
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+tags:
+  - name: hilo
+    description: Hilo API
+paths:
+  /hilo/roll:
+    post:
+      tags:
+        - hilo
+      summary: Roll a Hilo game.
+      description: This endpoint is called when a user places a bet on a hilo round. This starts the active game session and creates a bet record.
+      operationId: roll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientSeed
+                - amount
+                - mode
+                - targetNumber
+              properties:
+                clientSeed:
+                  type: string
+                  example: s33d3dgamesrcool
+                amount:
+                  type: number
+                  example: 5
+                mode:
+                  type: string
+                  example: 'under'
+                targetNumber:
+                  type: number
+                  example: 6
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HiloGame'
+        '405':
+          description: Invalid input
+components:
+  schemas:
+    HiloGame:
+      type: object
+      properties:
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFairInfo:
+          $ref: '#/components/schemas/CurrentRoundProvablyFairInfo'
+        roll:
+          $ref: '#/components/schemas/Roll'
+    ProvablyFairInfo:
+      type: object
+      properties:
+        gameName:
+          type: string
+        nonce:
+          type: number
+        roundOver:
+          type: boolean
+        userId:
+          type: string
+          format: uuid
+        hash:
+          type: string
+    CurrentRoundProvablyFairInfo:
+      type: object
+      properties:
+        newRound:
+          type: boolean
+        currentRound:
+          $ref: '#/components/schemas/ProvablyFairInfo'
+        clientSeed:
+          type: string
+    Bet:
+      type: object
+      properties:
+        balanceType:
+          type: string
+        betAmount:
+          type: number
+    ActiveGame:
+      type: object
+      properties:
+        activeGameId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFairInfo:
+          $ref: '#/components/schemas/CurrentRoundProvablyFairInfo'
+    Roll:
+      type: number

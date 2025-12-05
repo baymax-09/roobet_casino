@@ -1,0 +1,63 @@
+app:
+  replicas: 1
+  type: deployment
+  workers:
+    - analytics
+    - betCloseout
+    - betFeed
+    - blockIoDaemon
+    - cleanup
+    - crash
+    - cryptoPooling
+    - depositQueue
+    - emitScheduledMessage
+    - ethereumConfirmationsQueue
+    - ethereumDeposits
+    - ethereumShallowCopy
+    - ethereumSmartContracts
+    - ethereumTransactionQueue
+    - exchangeRates
+    - gameResolutionQueue
+    - genericFeeds
+    - hotbox
+    - inboundTransactionQueues
+    - migrate
+    - outboundConfirmationQueues
+    - outboundTransactionQueues
+    - pendingOutgoingTransactions
+    - plinko
+    - polygonShallowCopy
+    - poolBlockioDeposits
+    - poolEthDeposits
+    - poolingQueues
+    - rain
+    - reporting
+    - riskJobs
+    - roulette
+    - scheduledEventPublisher
+    - slotPotatoEvent
+    - transactionQueue
+    - tronShallowCopy
+    - withdrawWorker
+    - xrpShallowCopy
+
+ethereumSmartContracts:
+  global:
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        cpu: 50m
+        memory: 2G
+inboundTransactionQueues:
+  global:
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        cpu: 1000m
+        memory: 2G
+withdrawWorker:
+  app:
+    additionalConfigs:
+      RUN_WITHDRAW_WORKER: true

@@ -1,0 +1,333 @@
+openapi: 3.0.3
+info:
+  title: Roobet Towers API
+  description: |-
+    In the Towers game, a player attempts to climb the tower and progresses by successfully selecting the star in the active row.
+    The user climbs from the bottom row until they either:
+    - reach the top
+    - cash out on a successful row
+    - fail to select a star in the row(select a "bomb")
+
+    Towers currently has three difficulties
+    - easy: 4 stars, 1 "bomb"
+    - medium: 3 stars, 1 "bomb"
+    - hard: 2 stars, 1 "bomb"
+    - spooky: 3 stars, 2 "bombs"
+    - scary: 4 stars, 3 "bombs"
+
+    **Note**: We are going to use BearerToken authentication temporarily for third-party development, but when deployed on our platform these endpoints are authenticated with the typical session cookie.
+
+    Some useful links:
+    - [Towers on Roobet](https://roobet.com/towers)
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+tags:
+  - name: towers
+    description: Towers API
+paths:
+  /towers/start:
+    post:
+      tags:
+        - towers
+      summary: Start a Towers game.
+      description: This endpoint is called when a user places a bet on a Towers game. This starts the active game session and creates a bet record.
+      operationId: startGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientSeed
+                - amount
+                - difficulty
+              properties:
+                clientSeed:
+                  type: string
+                  example: s33d3dgamesrcool
+                amount:
+                  type: number
+                  example: 5
+                difficulty:
+                  $ref: '#/components/schemas/Difficulty'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TowersGame'
+        '405':
+          description: Invalid input
+  /towers/cashout:
+    post:
+      tags:
+        - towers
+      summary: Cashout without progressing to the next row
+      description: As long as the user has not "bombed" out, they can choose to cashout at any intermediate row and recieve a payout based on our payout schedule.
+      operationId: cashout
+      parameters:
+        - name: activeGameId
+          in: query
+          description: The id of the Towers game that is being played
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                activeGameId:
+                  type: string
+                  format: uuid
+                  example: 123e4567-e89b-12d3-a456-426614174000
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bet:
+                    $ref: '#/components/schemas/Bet'
+                  deck:
+                    $ref: '#/components/schemas/TowersDeck'
+        '405':
+          description: Invalid input
+  /towers/getActiveGame:
+    get:
+      tags:
+        - towers
+      summary: Fetches the user's currently active Tower game
+      description: Users can only have one singleton active Tower game and this persists between sessions or page refreshes.
+      operationId: getActiveGame
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activeGameId:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426614174000
+                  difficulty:
+                    $ref: '#/components/schemas/Difficulty'
+                  currentRow:
+                    type: number
+                    example: 2
+                  bet:
+                    $ref: '#/components/schemas/Bet'
+                  provablyFairInfo:
+                    $ref: '#/components/schemas/ProvablyFairInfo'
+                  playedRows:
+                    $ref: '#/components/schemas/InProgressTowersDeck'
+        '400':
+          description: Invalid status value
+  /towers/selectCard:
+    post:
+      tags:
+        - towers
+      summary: Select a card in the active row on the Tower
+      description: The user can select a card only on the active row and will otherwise be rejected.
+      operationId: selectCard
+      parameters:
+        - name: activeGameId
+          in: query
+          description: The id of the Towers game that is being played
+          required: true
+          schema:
+            type: string
+        - name: selectedCard
+          in: query
+          description: The row index of the card being selected
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 2
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    enum:
+                      - poop
+                      - fruit
+                  payoutMultiplier:
+                    type: number
+                    example: 2.0736
+                  provablyFairInfo:
+                    $ref: '#/components/schemas/ProvablyFairInfo'
+        '400':
+          description: Invalid status value
+  /towers/gameboardLayout:
+    get:
+      tags:
+        - towers
+      summary: Retrieves the layout based on difficulty and wager amount
+      description: We programatically generate the Towers layout and send it back to frontend.
+      operationId: gameboardLayout
+      parameters:
+        - name: difficulty
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Difficulty'
+        - name: amount
+          in: query
+          description: Status values that need to be considered for filter
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gameboard'
+        '400':
+          description: Invalid status value
+components:
+  securitySchemes:
+    bearerAuth: # temporary for Arc development
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sid
+  schemas:
+    Gameboard:
+      type: object
+      properties:
+        rows:
+          type: number
+          example: 8
+        columns:
+          type: number
+          example: 3
+        poopPerRow:
+          type: number
+          example: 1
+        payouts:
+          type: array
+          example: [1.44, 2.0736, 2.9859839999999997, 4.299816959999999, 6.191736422399999, 8.916100448255998, 12.839184645488636, 18.488425889503638]
+          items:
+            type: integer
+    TowersGame:
+      type: object
+      properties:
+        activeGameId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFairInfo:
+          $ref: '#/components/schemas/CurrentRoundProvablyFairInfo'
+        game:
+          $ref: '#/components/schemas/ActiveGame'
+        layout:
+          $ref: '#/components/schemas/Gameboard'
+    ProvablyFairInfo:
+      type: object
+      properties:
+        gameName:
+          type: string
+        nonce:
+          type: number
+        roundOver:
+          type: boolean
+        userId:
+          type: string
+          format: uuid
+        hash:
+          type: string
+    CurrentRoundProvablyFairInfo:
+      type: object
+      properties:
+        newRound:
+          type: boolean
+        currencRound:
+          $ref: '#/components/schemas/ProvablyFairInfo'
+        clientSeed:
+          type: string
+    Bet:
+      type: object
+      properties:
+        balanceType:
+          type: string
+        betAmount:
+          type: number
+    ActiveGame:
+      type: object
+      properties:
+        activeGameId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFairInfo:
+          $ref: '#/components/schemas/CurrentRoundProvablyFairInfo'
+    Difficulty:
+      type: string
+      enum:
+        - _easy
+        - _medium
+        - _hard
+        - _scary
+        - _spooky
+    TowersRow:
+      description: A individual row, progressively revealed as the user climbs the tower.
+      type: object
+      example:
+        0: fruit
+        1: fruit
+        2: poop
+    TowersDeck:
+      description: This is sent after cashout or "bombing" out and is used to display the whole Tower contents.
+      type: object
+      properties:
+        0:
+          $ref: '#/components/schemas/TowersRow'
+        1:
+          $ref: '#/components/schemas/TowersRow'
+        2:
+          $ref: '#/components/schemas/TowersRow'
+        3:
+          $ref: '#/components/schemas/TowersRow'
+        4:
+          $ref: '#/components/schemas/TowersRow'
+        5:
+          $ref: '#/components/schemas/TowersRow'
+        6:
+          $ref: '#/components/schemas/TowersRow'
+        7:
+          $ref: '#/components/schemas/TowersRow'
+    InProgressTowersDeck:
+      description: A partial version of TowersDeck
+      type: object
+      properties:
+        0:
+          $ref: '#/components/schemas/TowersRow'
+        1:
+          $ref: '#/components/schemas/TowersRow'
+security:
+  - bearerAuth: []
+  - cookieAuth: []

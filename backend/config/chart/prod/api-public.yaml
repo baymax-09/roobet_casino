@@ -1,0 +1,24 @@
+global:
+  apm:
+    enabled: true
+  ingress:
+    enabled: true
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+app:
+  name: api-public
+  type: deployment
+
+  ip2location: true
+  replicas: 3
+  service: true
+  paths:
+    - /affiliate/stats
+    - /tipping/send

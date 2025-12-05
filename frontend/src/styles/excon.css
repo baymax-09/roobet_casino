@@ -1,0 +1,27 @@
+@font-face {
+  font-family: 'Excon';
+  src: url('../../assets/fonts/Excon-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Excon';
+  src: url('../../assets/fonts/Excon-Black.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: 'Excon';
+  src: url('../../assets/fonts/Excon-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Excon';
+  src: url('../../assets/fonts/Excon-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+}

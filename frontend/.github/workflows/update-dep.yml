@@ -1,0 +1,46 @@
+name: Update dependency
+on:
+  repository_dispatch:
+    types:
+      - update_dep
+
+jobs:
+  update_proj_atl_deps:
+    runs-on:
+      group: roobet-runners
+
+    steps:
+      # Checkout repo code.
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.ref }}
+          token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+
+      # Make node available.
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        env:
+          NPM_PGK_GITHUB_TOKEN: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+        run: |
+          npm ci
+
+      - name: Update dependancy
+        env:
+          NPM_PGK_GITHUB_TOKEN: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+        run: |
+          npm update ${{ github.event.client_payload.package }}
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "Roobet Engineering"
+          git config --global user.email "engineering@roobet.com"
+
+          git add .
+          git commit --no-verify -m "chore(deps): update ${{ github.event.client_payload.package }}" || echo "${{ github.event.client_payload.package }} already up-to-date."
+          git push --no-verify

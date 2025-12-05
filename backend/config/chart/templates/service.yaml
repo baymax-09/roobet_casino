@@ -1,0 +1,21 @@
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+{{- if $Values.app.service -}}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+  labels:
+    {{- include "app.labels" $Values | nindent 4 }}
+spec:
+  selector:
+    {{- include "app.labels" $Values | nindent 4 }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: {{ $Values.global.port }}
+
+---
+{{ end }}
+{{- end }}

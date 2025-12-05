@@ -1,0 +1,1 @@
+export DATADOG_API_KEY=$DATADOG_API_KEY ; export DATADOG_SITE=$ROOBET_DATADOG_SITE && npx datadog-ci sourcemaps upload dist/product --service=$ROOBET_DATADOG_SERVICE --release-version=$GITHUB_SHA --minified-path-prefix=/

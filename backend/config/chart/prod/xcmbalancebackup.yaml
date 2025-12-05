@@ -1,0 +1,24 @@
+global:
+  configs: null
+  image:
+    repository: 184689117095.dkr.ecr.eu-central-1.amazonaws.com/dev-alpine-prod
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+  secrets: null
+
+app:
+  name: xcmbalancebackup
+  type: cronjob
+  
+  additionalSecrets:
+    - USER_EXPORT_TOKEN
+  command: '["/bin/sh", "-c", "/opt/bin/xcmbalancebackup.sh"]'
+  image:
+    tag: prod
+  schedule: '0 0 1 * *'
+  scripts:
+    xcmbalancebackup.sh: /opt/bin

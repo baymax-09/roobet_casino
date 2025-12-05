@@ -1,0 +1,43 @@
+name: Setup node
+description: Installs node modules
+inputs:
+  npm-github-pkg-token:
+    description: Github package token
+    required: true
+runs:
+  using: composite
+  steps:
+    # Checkout repo code.
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Make node available.
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 16
+        cache: npm
+
+    # Attempt to recover cache.
+    - id: recover-node-modules
+      name: Cache node modules
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+
+    # Run npm install if the cache wasn't found.
+    - name: Install dependencies
+      if: steps.recover-node-modules.outputs.cache-hit != 'true'
+      run: npm ci
+      shell: bash
+      env:
+        NPM_PGK_GITHUB_TOKEN: ${{ inputs.npm-github-pkg-token }}
+
+    # Add node modules to cache if there wasn't a hit.
+    - name: Cache node modules
+      if: steps.recover-node-modules.outputs.cache-hit != 'true'
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}

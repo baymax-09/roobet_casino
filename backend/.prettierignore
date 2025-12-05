@@ -1,0 +1,4 @@
+*.gen.ts
+locales/
+tsconfig.*.json
+tsconfig.json

@@ -1,0 +1,33 @@
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+  labels:
+    {{- include "app.labels" $Values | nindent 4 }}
+data:
+  {{- include "app.configs" $Values | indent 4 }}
+
+---
+{{ end }}
+
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+{{- if $Values.app.scripts -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "app.lowerName" $Values }}-scripts
+  labels:
+    {{- include "app.labels" $Values | nindent 4 }}
+data:
+  {{ range $key, $val := $Values.app.scripts }}
+    {{- ($.Files.Glob (printf "scripts/%s" $key)).AsConfig | nindent 2 }}
+  {{- end }}
+
+---
+{{- end }}
+{{- end }}

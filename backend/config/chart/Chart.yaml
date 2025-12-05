@@ -1,0 +1,7 @@
+apiVersion: v2
+name: backend
+description: A Helm chart for deploying backend workloads to k8s
+version: 0.0.1
+maintainers:
+  - name: SRE Team
+    email: sre@roobet.com

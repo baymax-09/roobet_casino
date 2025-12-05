@@ -1,0 +1,430 @@
+{
+	"info": {
+		"_postman_id": "7708a9ee-02a1-48c5-b68b-117923bf92d0",
+		"name": "Blackjack",
+		"description": "The Roobet House Blackjack API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "978305"
+	},
+	"item": [
+		{
+			"name": "Create Game",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const createResp = pm.response.json()",
+							"pm.collectionVariables.set('gameId', createResp.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{apiUrl}}/blackjack",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Game",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Resume",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/active",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"active"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Game",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{startReqDataFreePlay}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}/start",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{hitReqData}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}/hit",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}",
+						"hit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Split",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{splitReqData}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}/split",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}",
+						"split"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Double Down",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{doubleDownReqData}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}/doubleDown",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}",
+						"doubleDown"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insure",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{insureReqDataAccept}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}/insure",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}",
+						"insure"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stand",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "{{cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{standReqData}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/blackjack/{{gameId}}/stand",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"blackjack",
+						"{{gameId}}",
+						"stand"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiUrl",
+			"value": "api.pambet.test",
+			"type": "string"
+		},
+		{
+			"key": "cookie",
+			"value": "_ga=GA1.1.734932322.1704818956; _ga_00JS1BZ93P=GS1.1.1706801334.17.1.1706801373.21.0.0; _ga_W62ERM8Q5Q=GS1.1.1706801334.17.1.1706801373.0.0.0; _gat_UA-127086615-1=1; _gid=GA1.2.578024596.1706801361; machineSecret=20c0497166; twofactorRequired=false; userId=9dc92b9a-1f04-4964-a398-c1d218430ffb; connect.sid=s%3A3DZ2Serp496isDaWpRzQp3z_1l2U6lOl.E4elrDWMdIiDubmYzTYc1j6F5o8lalHUEsROVFmMCvQ",
+			"type": "string"
+		},
+		{
+			"key": "gameId",
+			"value": "65a59a9eb48ae85c4813dde6",
+			"type": "string"
+		},
+		{
+			"key": "playerId",
+			"value": "9dc92b9a-1f04-4964-a398-c1d218430ffb",
+			"type": "string"
+		},
+		{
+			"key": "playerWager",
+			"value": "100",
+			"type": "string"
+		},
+		{
+			"key": "perfectPairWager",
+			"value": "100",
+			"type": "string"
+		},
+		{
+			"key": "twentyOnePlusThreeWager",
+			"value": "100",
+			"type": "string"
+		},
+		{
+			"key": "seatIndex",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "hashOverride",
+			"value": "71c19c8f5722028a35baae53b1e4907f791e406191f129cfccef76193afa9c30",
+			"type": "string"
+		},
+		{
+			"key": "startReqData",
+			"value": "{\"seats\": [{\"playerId\": \"{{playerId}}\", \"seatIndex\": {{seatIndex}}, \"wagers\": [{\"type\": \"main\", \"amount\": {{playerWager}}}]}]}",
+			"type": "string"
+		},
+		{
+			"key": "startReqDataFreePlay",
+			"value": "{\"seats\": [{\"playerId\": \"{{playerId}}\", \"wagers\": [{\"type\": \"main\", \"amount\": 0}]}]}",
+			"type": "string"
+		},
+		{
+			"key": "startReqDataPerfectPair",
+			"value": "{ \"seats\": [{ \"playerId\": \"{{playerId}}\", \"wagers\": [{ \"type\": \"main\",  \"amount\": {{playerWager}}, \"sides\": [{ \"type\": \"perfect-pair\", \"amount\": {{perfectPairWager}} }] }] }] }",
+			"type": "string"
+		},
+		{
+			"key": "startReqData21Plus3",
+			"value": "{ \"seats\": [ { \"playerId\": \"{{playerId}}\", \"wagers\": [ { \"type\": \"main\", \"amount\": {{playerWager}}, \"sides\": [{ \"type\": \"twenty-one-plus-three\", \"amount\": {{twentyOnePlusThreeWager}} }] }] }] }",
+			"type": "string"
+		},
+		{
+			"key": "startReqDataMax",
+			"value": "{\"seats\": [{\"playerId\": \"{{playerId}}\", \"wagers\": [{\"type\": \"main\", \"amount\": {{playerWager}}, \"sides\": [{ \"type\": \"perfect-pair\", \"amount\": {{perfectPairWager}} },{ \"type\": \"twenty-one-plus-three\", \"amount\": {{twentyOnePlusThreeWager}} }]}]}]}",
+			"type": "string"
+		},
+		{
+			"key": "startReqDataMaxOverride",
+			"value": "{ \"hash\": \"{{hashOverride}}\", \"seats\": [{\"playerId\": \"{{playerId}}\", \"wagers\": [{\"type\": \"main\", \"amount\": {{playerWager}}, \"sides\": [{ \"type\": \"perfect-pair\", \"amount\": {{perfectPairWager}} },{ \"type\": \"twenty-one-plus-three\", \"amount\": {{twentyOnePlusThreeWager}} }]}]}]}",
+			"type": "string"
+		},
+		{
+			"key": "startReqDataWagerError",
+			"value": "{\"seats\": [{\"playerId\": \"{{playerId}}\", \"wagers\": [{\"type\": \"main\", \"amount\": 0.45}]}]}",
+			"type": "string"
+		},
+		{
+			"key": "hitReqData",
+			"value": "{ \"gameId\": \"{{gameId}}\", \"handIndex\": 0 }",
+			"type": "string"
+		},
+		{
+			"key": "standReqData",
+			"value": "{ \"gameId\": \"{{gameId}}\", \"handIndex\": 0 }",
+			"type": "string"
+		},
+		{
+			"key": "insureReqDataAccept",
+			"value": "{ \"gameId\": \"{{gameId}}\", \"handIndex\": 0, \"accept\": true }",
+			"type": "string"
+		},
+		{
+			"key": "insureReqDataDecline",
+			"value": "{ \"gameId\": \"{{gameId}}\", \"handIndex\": 0, \"accept\": false }",
+			"type": "string"
+		},
+		{
+			"key": "doubleDownReqData",
+			"value": "{ \"gameId\": \"{{gameId}}\", \"handIndex\": 0 }",
+			"type": "string"
+		},
+		{
+			"key": "splitReqData",
+			"value": "{ \"gameId\": \"{{gameId}}\", \"handIndex\": 0 }",
+			"type": "string"
+		}
+	]
+}

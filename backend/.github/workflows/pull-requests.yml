@@ -1,0 +1,114 @@
+name: Pull requests
+
+on:
+  pull_request:
+    branches: ['main']
+
+env:
+  gh-actions-key: ${{ secrets.GH_ACTIONS_DEPLOY_KEY }}
+
+jobs:
+  lint:
+    runs-on:
+      group: roobet-runners
+    needs: []
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout shared actions
+        uses: actions/checkout@v4
+        with:
+          ref: v5.2
+          repository: project-atl/gh-actions
+          path: ./.github/gh-actions
+          ssh-key: ${{ env.gh-actions-key }}
+
+      - name: Copy .env template
+        run: |
+          cp .env.template .env
+
+      - name: Node modules install
+        uses: ./.github/gh-actions/actions/npm-install
+        with:
+          cache-name: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+
+      - name: Run eslint
+        run: |
+          npm run lint:error
+
+      - name: Run prettier
+        run: |
+          npm run format:check
+
+      - name: Run yamllint
+        run: |
+          npm run lint:yaml
+
+      - name: Run typecheck
+        run: |
+          npm run checktypes
+
+      - name: Run Helm Lint
+        uses: ./.github/actions/helm-lint
+
+  test:
+    runs-on:
+      group: roobet-runners
+    needs: []
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout shared actions
+        uses: actions/checkout@v4
+        with:
+          ref: v5.2
+          repository: project-atl/gh-actions
+          path: ./.github/gh-actions
+          ssh-key: ${{ env.gh-actions-key }}
+
+      - name: Copy .env template
+        run: |
+          cp .env.template .env
+
+      - name: Node modules install
+        uses: ./.github/gh-actions/actions/npm-install
+        with:
+          cache-name: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+
+      - name: Run jest
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
+        run: |
+          npm run test:ci
+
+  build:
+    runs-on:
+      group: roobet-runners
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout shared actions
+        uses: actions/checkout@v4
+        with:
+          ref: v5.2
+          repository: project-atl/gh-actions
+          path: ./.github/gh-actions
+          ssh-key: ${{ env.gh-actions-key }}
+
+      - name: Copy .env template
+        run: |
+          cp .env.template .env
+
+      - name: Node modules install
+        uses: ./.github/gh-actions/actions/npm-install
+        with:
+          cache-name: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+
+      - name: Build app
+        uses: ./.github/gh-actions/actions/npm-run
+        with:
+          cmd: build
+          cache-name: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}

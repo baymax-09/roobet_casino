@@ -1,0 +1,6 @@
+export const TEXT_SHADOW_COLOR = '#632213'
+export const TEXT_SHADOW_COLOR_2 = `${TEXT_SHADOW_COLOR}3d`
+
+export const BANNER_BORDER_RADIUS = 12
+
+export const BANNER_DESKTOP_HEIGHT = 112

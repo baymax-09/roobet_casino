@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /*?*ref=
+
+User-agent: GPTBot
+Disallow: /
+
+Sitemap: https://roobet.com/sitemap.xml

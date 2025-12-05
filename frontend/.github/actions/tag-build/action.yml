@@ -1,0 +1,59 @@
+name: Tag and build
+description: Tags the current version and builds both UIs
+inputs:
+  build-path:
+    required: true
+    description: Location of build files
+  build-cache-key:
+    required: true
+    description: Name of cache key for sharing build files
+  secrets:
+    required: true
+    description: List of secrets necessary for build
+  config:
+    required: true
+    description: List of env vars necessary for build
+
+runs:
+  using: composite
+  steps:
+    # Setup node
+    - name: Setup node
+      uses: ./.github/actions/setup-node
+      with:
+        npm-github-pkg-token: ${{ fromJSON(inputs.secrets).NPM_PGK_GITHUB_TOKEN }}
+
+    # Add current version to tag file
+    - name: Run version script
+      shell: bash
+      run: |
+        ./scripts/version.sh ${{ github.sha }}
+
+    # Build both UIs.
+    - name: Build
+      shell: bash
+      env: ${{ fromJSON(inputs.config) }}
+      run: |
+        npm run build
+
+    # Push source maps to Datadog.
+    - name: Push source maps to Datadog
+      shell: bash
+      env:
+        GITHUB_SHA: ${{ env.GITHUB_SHA }}
+        DATADOG_API_KEY: ${{ fromJSON(inputs.secrets).DATADOG_API_KEY }}
+        ROOBET_DATADOG_SITE: ${{ fromJSON(inputs.config).ROOBET_DATADOG_SITE }}
+        ROOBET_DATADOG_SERVICE: ${{ fromJSON(inputs.config).ROOBET_DATADOG_SERVICE }}
+      run: ./scripts/publishSourceMapsDatadog.sh
+
+    # Remove source maps from build, we don't want to ship these.
+    - name: Remove source maps from build
+      shell: bash
+      run: rm -r ./${{ inputs.build-path }}/**/*.js.map
+
+    # Add build output to GHA cache to be used in other jobs.
+    - name: Cache build output
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.build-path }}
+        key: ${{ inputs.build-cache-key }}

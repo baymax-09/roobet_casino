@@ -1,0 +1,44 @@
+name: Build & Push Docker Image to ECR
+description: Builds and pushes docker image to AWS's elastic container registry
+inputs:
+  aws-account:
+    required: true
+    description: AWS Account ID
+  aws-region:
+    required: true
+    description: AWS Region
+  aws-role:
+    required: true
+    description: AWS Role
+  erc-repo:
+    required: true
+    description: ECR Repository Name
+  image-tag:
+    required: true
+    description: Image tag
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR
+      shell: bash
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ inputs.erc-repo }}
+        IMAGE_TAG: ${{ inputs.image-tag }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "IMAGE $IMAGE_TAG is pushed to $ECR_REGISTRY/$ECR_REPOSITORY"
+        echo "image_tag=$IMAGE_TAG"
+        echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"

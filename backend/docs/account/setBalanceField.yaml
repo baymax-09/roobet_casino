@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  title: Roobet Account API
+  description: |-
+    This endpoint gets called anytime the user changes their selected balance
+  version: 1.0.0
+servers:
+  - url: http://api.pambet.test/account
+tags:
+  - name: get
+    description: Account API
+paths:
+  /setBalanceField:
+    post:
+      tags:
+        - account
+      summary: Change the selected balance type.
+      description: This endpoint is called when a user changes their balance. Updating the current selected Balance
+      operationId: startGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - balanceField
+              properties:
+                balanceField:
+                  type: string
+                  example: eth
+      responses:
+        '200':
+          description: Success
+
+        '405':
+          description: Invalid Data
+
+components:
+  schemas:
+    BalanceField:
+      type: object
+      properties:
+        balanceField:
+          type: string

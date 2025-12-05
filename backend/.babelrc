@@ -1,0 +1,22 @@
+{
+  "ignore": ["**/*.test.ts", "**/__mocks__/*", "**/tests/*", "**/test/*"],
+  "presets": ["@babel/preset-env", "@babel/preset-typescript"],
+  "plugins": [
+    "@babel/proposal-class-properties",
+    "@babel/proposal-export-default-from",
+    "@babel/proposal-export-namespace-from",
+    "@babel/proposal-object-rest-spread",
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "alias": {
+          "src": "./src",
+          "test": "./test"
+        }
+      }
+    ],
+    ["source-map-support"]
+  ],
+  "comments": false
+}

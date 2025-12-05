@@ -1,0 +1,26 @@
+* @project-atl/development
+
+/* @project-atl/leads
+
+# CI/CD
+atlantis.yaml @project-atl/sre @project-atl/leads
+config/chart/ @project-atl/sre
+config/k8s/ @project-atl/sre @project-atl/leads
+config/tf/ @project-atl/sre @project-atl/leads
+.github/ @project-atl/leads
+
+# Modules
+src/modules/crypto/ @project-atl/payments
+src/modules/currency/ @project-atl/payments
+src/modules/deposit/ @project-atl/payments
+src/modules/fraud/ @project-atl/leads
+src/modules/withdraw/ @project-atl/payments
+
+# System
+src/system/ @project-atl/leads
+
+# Vendors
+src/vendors/blockio/ @project-atl/payments
+src/vendors/fixer/ @project-atl/payments
+src/vendors/paymentiq/ @project-atl/payments
+src/vendors/seon/ @project-atl/leads

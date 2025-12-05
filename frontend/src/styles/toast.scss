@@ -1,0 +1,88 @@
+:global {
+  @keyframes :global(levelFlash) {
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .Toastify__toast-container {
+    position: absolute !important;
+  }
+  .Toastify__toast {
+    font-weight: 300 !important;
+    font-size: 14px !important;
+    background: #191539 !important;
+    color: #fff !important;
+    border-radius: 3px !important;
+    min-height: 40px !important;
+    word-break: break-word !important;
+    padding: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: 0px 4px 6px rgba(20, 18, 43, 60%) !important;
+
+    &.flash {
+      &:after {
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 20;
+        content: ' ';
+        background: #fff;
+        animation: levelFlash 0.2s linear forwards;
+        animation-delay: 0.3s;
+        border-radius: 3;
+      }
+    }
+
+    &.blue {
+      background: #3f51b5 !important;
+      filter: drop-shadow(2px 4px 6px rgba(63, 81, 181, 0.4));
+
+      .Toastify__toast-body {
+        position: relative;
+        z-index: 5;
+      }
+
+      &:before {
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        content: ' ';
+        background: url(/images/logo_pattern.png);
+        background-size: 60;
+        opacity: 0.45;
+      }
+    }
+
+    .Toastify__close-button {
+      color: #ffffff !important;
+      display: inline-block !important;
+      top: -2px !important;
+      align-self: center !important;
+      &:hover {
+        background: transparent !important;
+      }
+    }
+    .Toastify__progress-bar {
+      background: rgba(255, 255, 255, 0.15) !important;
+      background-image: none !important;
+      height: 3px !important;
+    }
+  }
+  .Toastify__toast--success {
+    border-left: solid 4px #5db55d !important;
+  }
+  .Toastify__toast--error {
+    border-left: solid 4px #f35455 !important;
+  }
+  .Toastify__toast--info {
+    border-left: solid 4px #d9ac29 !important;
+  }
+}

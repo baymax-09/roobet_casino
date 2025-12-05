@@ -1,0 +1,142 @@
+global:
+  apm:
+    enabled: false
+  cron:
+    history:
+      failure: 1
+      success: 1
+    retries: 0
+  image:
+    pullPolicy: IfNotPresent
+  ingress:
+    enabled: false
+    className: nginx-protected
+    host: api
+  ip2location:
+    name: ip2location
+    path: /data
+  livenessProbe:
+    enabled: true
+    health:
+      path: /health
+      port: 3004
+      scheme: HTTP
+    settings:
+      failureThreshold: 5
+      initialDelaySeconds: 30
+      periodSeconds: 3
+      successThreshold: 1
+      timeoutSeconds: 10
+  metrics:
+    enabled: false
+    path: /metrics
+    port: 3004
+  port: 3003
+  readinessProbe:
+    enabled: true
+    health:
+      path: /health
+      port: 3004
+      scheme: HTTP
+    settings:
+      failureThreshold: 3
+      initialDelaySeconds: 10
+      periodSeconds: 3
+      successThreshold: 1
+      timeoutSeconds: 5
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 512Mi
+  serviceAccount:
+    enabled: false
+
+  configs:
+    AWS_DEFAULT_REGION: eu-west-2
+    BALANCE_DECIMAL_PLACES: "2"
+    BET_MAX_PAYOUT: "7000000"
+    BET_MAX_PROFIT: "50000"
+    BLACKJACK_HOUSE_EDGE: "4"
+    BLACKJACK_MIN_BET: "0.5"
+    BLACKJACK_MAX_BET: "1000"
+    BLACKJACK_SEED: "12a02ee3-f3a4-452d-b087-f185194166cc"
+    BLACKJACK_INSURANCE_RATE: "0.5"
+    BLACKJACK_INSURANCE_PAYOUT: "2"
+    BLACKJACK_PAYOUT_STANDARD: "1"
+    BLACKJACK_PAYOUT_BLACKJACK: "1.5"
+    BLACKJACK_MINI_BET_PERFECT_PAIR: "0.5"
+    BLACKJACK_MAXI_BET_PERFECT_PAIR: "200"
+    BLACKJACK_PERFECT_PAIR_PAYOUT_TRUE: "25"
+    BLACKJACK_PERFECT_PAIR_PAYOUT_COLORED: "12"
+    BLACKJACK_PERFECT_PAIR_PAYOUT_MIXED: "6"
+    BLACKJACK_MINI_BET_21_PLUS_3: "0.50"
+    BLACKJACK_MAXI_BET_21_PLUS_3: "100"
+    BLACKJACK_21_PLUS_3_PAYOUT_SUITED_TRIPLE: "100"
+    BLACKJACK_21_PLUS_3_PAYOUT_STRAIGHT_FLUSH: "40"
+    BLACKJACK_21_PLUS_3_PAYOUT_THREE_OF_A_KIND: "30"
+    BLACKJACK_21_PLUS_3_PAYOUT_STRAIGHT: "10"
+    BLACKJACK_21_PLUS_3_PAYOUT_FLUSH: "5"
+    CASH_DASH_HOUSE_EDGE: "4"
+    CASH_DASH_MAX_BET: "200"
+    CASH_DASH_MAX_PAYOUT: "6000"
+    CASH_DASH_MAX_ROWS: "8"
+    COINFLIP_HOUSE_EDGE: "4"
+    COINFLIP_MAX_BET: "1000"
+    COINFLIP_MIN_BET: "0.10"
+    CRASH_GAME_COUNT: "2000000"
+    CRASH_HOUSE_EDGE: "4"
+    CRASH_MAX_BET: "20000"
+    DD_APPSEC_ENABLED: true
+    DD_LOGS_INJECTION: true
+    DD_PROFILING_ENABLED: true
+    DD_RUNTIME_METRICS_ENABLED: true
+    DD_SERVICE_MAPPING: redis:redis,ioredis:redis,mongodb:mongodb,mongoose:mongodb,mongodb-core:mongodb,amqplib:rabbitmq
+    DEPOSITS_ALERT_LOSS_LIMIT: "50"
+    DEPOSITS_ALERT_LOWER_LIMIT: "1000"
+    DICE_HOUSE_EDGE: "1"
+    DICE_MAX_BET: "20000"
+    ETHERSCAN_ENABLED: true
+    HOTBOX_MAX_BET: "20000"
+    JUNGLE_MINES_HOUSE_EDGE: "4"
+    JUNGLE_MINES_MAX_BET: "20000"
+    JUNGLE_MINES_MAX_PAYOUT: "50000"
+    LINEAR_MINES_HOUSE_EDGE: "4"
+    LINEAR_MINES_MAX_BET: "10000"
+    LINEAR_MINES_MAX_PAYOUT: "200000"
+    HOTBOX_GAME_COUNT: "10000"
+    HOTBOX_HOUSE_EDGE: "4"
+    MAX_BITCOIN_FEE_USD: "10"
+    MAX_DOGECOIN_FEE_USD: "10"
+    MAX_LITECOIN_FEE_USD: "10"
+    MINES_HOUSE_EDGE: "4"
+    MINES_MAX_BET: "20000"
+    MINES_MAX_PAYOUT: "50000"
+    MINIMUM_TIP_BALANCE: "10"
+    PLINKO_GAME_COUNT: "1000"
+    PLINKO_HOUSE_EDGE: "1"
+    PLINKO_LIGHTNING_HOUSE_EDGE: "4"
+    PLINKO_MAX_BET: "1000"
+    PLINKO_MAX_PAYOUT: "200000"
+    RAINS_DEFAULT_COUNTDOWN: "1"
+    RAINS_DEFAULT_DURATION: "5"
+    RAINS_MINIMUM_RAIN: "2"
+    REPORTING_AS_JOBS: false
+    RETHINKDB_DISCOVERY: true
+    RETHINKDB_PORT: "28015"
+    RETHINKDB_SHARDS_PER_TABLE: "1"
+    ROULETTE_GAME_COUNT: "2000000"
+    ROULETTE_HOUSE_EDGE: "5"
+    ROULETTE_MAX_BET: "20000"
+    SLOT_POTATO_EVENT_START_BUFFER: "3600000"
+    SLOTEGRATOR_CURRENCY: EUR
+    TOWERS_HOUSE_EDGE: "4"
+    TOWERS_MAX_BET: "20000"
+    TOWERS_MAX_PAYOUT: "50000"
+    TOWERS_MAX_ROWS: "8"
+    TRON_MAIN_WALLET_INDEX: "0"
+    TRON_NONCE_INIT: "0"
+    TRON_POOLING_WALLET_INDEX: "0"
+    UNIBO_BASE_URL: https://bridge.unibo.io
+    UNIBO_TENANT: ROOBET

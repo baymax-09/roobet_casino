@@ -1,0 +1,1 @@
+export { TPGamesListRoute } from './TPGamesListRoute'

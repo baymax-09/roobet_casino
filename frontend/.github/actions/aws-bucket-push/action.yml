@@ -1,0 +1,59 @@
+name: S3 Bucket Push
+description: Push built UIs to AWS S3 Bucket
+inputs:
+  aws-account:
+    required: true
+    description: AWS Account ID
+  aws-region:
+    required: true
+    description: AWS Region
+  aws-role:
+    required: true
+    description: AWS Role
+  build-cache-key:
+    required: true
+    description: Name of cache key for sharing build files
+  build-path:
+    required: true
+    description: Location of build files
+  cloudfront-distribution-id:
+    required: true
+    description: Cloudfront Distribution ID
+  s3-bucket-name:
+    required: true
+    description: S3 Bucket Name
+
+runs:
+  using: composite
+  steps:
+    - name: Download build from cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.build-path }}
+        key: ${{ inputs.build-cache-key }}
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
+
+    - name: Sync ACP files to S3
+      run: aws s3 sync ${{ inputs.build-path }}/acp s3://${{ inputs.s3-bucket-name-acp }}/
+      shell: bash
+
+    - name: Sync Product files to S3
+      run: aws s3 sync ${{ inputs.build-path }}/product s3://${{ inputs.s3-bucket-name-product }}/
+      shell: bash
+
+    - name: Invalidate Cloudfront ACP cache
+      uses: chetan/invalidate-cloudfront-action@v2
+      env:
+        DISTRIBUTION: ${{ inputs.cloudfront-distribution-id-acp }}
+        PATHS: "/*"
+
+    - name: Invalidate Cloudfront Product cache
+      uses: chetan/invalidate-cloudfront-action@v2
+      env:
+        DISTRIBUTION: ${{ inputs.cloudfront-distribution-id-product }}
+        PATHS: "/*"

@@ -1,0 +1,1 @@
+export { updateSoftswissGameList } from './updateSoftswissGameList'

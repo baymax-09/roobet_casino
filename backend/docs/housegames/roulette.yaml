@@ -1,0 +1,319 @@
+openapi: 3.0.3
+info:
+  title: Roulette API
+  description: |-
+    In our Roulette game, a player has 3 tiles to select (Silver,Bronze,Gold) and optionally can select a Bait bet
+    - Select a color
+    - Roulette rolls color
+
+    Roulette currently has four pay-out options
+    - Bronze: 1:2
+    - Silver: 1:2
+    - Bait: 1:7
+    - Gold: 1:14
+
+    Some useful links:
+    - [Roulette on Roobet](https://roobet.com/roulette)
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+tags:
+  - name: roulette
+    description: Roulette API
+paths:
+  /roulette/joinGame:
+    post:
+      tags:
+        - roulette
+      summary: Join a roulette game.
+      description: This endpoint is called when a user places a bet on a Roulette round. This starts the active game session and creates a bet record.
+      operationId: joinGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - betSelection
+              properties:
+                amount:
+                  type: number
+                  example: 5
+                betSelection:
+                  type: number
+                  example: 2
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                example: {
+                  success: true
+                }
+        '405':
+          description: Invalid input
+          content:
+            schema:
+              example: {
+                code: "game__not_taking_bets",
+                message: "This game is currently not taking bets"
+              }
+  /roulette/getGameById:
+    get:
+      tags:
+        - roulette
+      summary: Get the roulette game round by Id
+      description: Find a record of a roulette round by id
+      operationId: getGameById
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '405':
+          description: Invalid Game Id
+  /roulette/recentNumbers:
+    get:
+      tags:
+        - roulette
+      summary: Fetches the list of recent roulette rounds
+      description: Displays the current array list of the recent rounds in the footer of the roulette game board.
+      operationId: recentNumbers
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecentNumbers"
+        '400':
+          description: Invalid status value
+
+  /roulette/getActiveGame:
+    get:
+      tags:
+        - roulette
+      summary: Get the current roulette round
+      description: Get the current active roulette round
+      operationId: getActiveGame
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/activeGame'
+        '405':
+          description: Invalid Game Id
+components:
+  schemas:
+    activeGame:
+      description: 'Current game details with bets'
+      type: object
+      properties:
+        bets:
+          items: {
+            type: array,
+            $ref: '#/components/schemas/Bets'
+          }
+        game:
+          type: object
+          properties:
+            bettingEndTime:
+              type: string
+            bettingStartTime:
+              type: string
+            countdown:
+              type: object
+              properties:
+                bettingEndTime:
+                  type: number
+                bettingStartTime:
+                  type: number
+                payoutEndTime:
+                  type: number
+                payoutStartTime:
+                  type: number
+                resetEndTime:
+                  type: number
+                resetStartTime:
+                  type: number
+                roundEndTime:
+                  type: number
+                roundStartTime:
+                  type: number
+        createdAt:
+          type: string
+        finalHash:
+          type: string
+        gameName:
+          type: string
+        hash:
+          type: string
+        hashIndex:
+          type: number
+        id:
+          type: string
+        index:
+          type: number
+        maxBet:
+          type: number
+        payoutEndTime:
+          type: string
+        payoutStartTime:
+          type: string
+        previousHash:
+          type: string
+        randomNumber:
+          type: number
+        resetEndTime:
+          type: string
+        resetStartTime:
+          type: string
+        roundEndTime:
+          type: string
+        roundStartTime:
+          type: string
+        spinNumber:
+          type: number
+        state:
+          type: string
+        winningNumber:
+          type: number
+    RecentNumbers:
+      description: 'Past Rolls for roulette'
+      type: object
+      properties:
+        id:
+          type: string
+        winningNumber:
+          type: number
+    Game:
+      description: 'Current game details'
+      type: object
+      properties:
+        bettingEndTime:
+          type: string
+        bettingStartTime:
+          type: string
+        countdown:
+          type: object
+          properties:
+            bettingEndTime:
+              type: number
+            bettingStartTime:
+              type: number
+            payoutEndTime:
+              type: number
+            payoutStartTime:
+              type: number
+            resetEndTime:
+              type: number
+            resetStartTime:
+              type: number
+            roundEndTime:
+              type: number
+            roundStartTime:
+              type: number
+        createdAt:
+          type: string
+        finalHash:
+          type: string
+        gameName:
+          type: string
+        hash:
+          type: string
+        hashIndex:
+          type: number
+        id:
+          type: string
+        index:
+          type: number
+        maxBet:
+          type: number
+        payoutEndTime:
+          type: string
+        payoutStartTime:
+          type: string
+        previousHash:
+          type: string
+        randomNumber:
+          type: number
+        resetEndTime:
+          type: string
+        resetStartTime:
+          type: string
+        roundEndTime:
+          type: string
+        roundStartTime:
+          type: string
+        spinNumber:
+          type: number
+        state:
+          type: string
+        winningNumber:
+          type: number
+    Bets:
+      type: object
+      description: 'bets on the current roulette game'
+      properties:
+        balanceType:
+          type: string
+          example: 'cash'
+        betAmount:
+          type: number
+          example: 2
+        betSelection:
+          type: number
+          example: 1
+        closedOut:
+          type: boolean
+          example: false
+        gameId:
+          type: string
+          example: 'e22d0f90-2914-402d-b21d-788dcde667b9'
+        gameIdentifier:
+          type: string
+          example: 'roulette'
+        gameName:
+          type: string
+          example: 'roulette'
+        hidden:
+          type: boolean
+          example: false
+        highRoller:
+          type: boolean
+          example: false
+        id:
+          type: string
+          example: '03ae11d7-9a48-4431-8289-f83fbcf87f9d'
+        incognito:
+          type: boolean
+          example: false
+        timestamp:
+          type: string
+          example: '2023-01-10T17:51:58.293Z'
+        twoFactor:
+          type: boolean
+          example: true
+        type:
+          type: string
+          example: 'Cash'
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '19ec215e-f1f5-484e-a7d8-7032a029c646'
+            name:
+              type: string
+              example: 'Damianhall18'
+        userId:
+          type: string
+          example: '19ec215e-f1f5-484e-a7d8-7032a029c646'

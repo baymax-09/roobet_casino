@@ -1,0 +1,102 @@
+name: Production
+
+on:
+  push:
+    branches: ['main']
+
+env:
+  artifact-name-build: artifact-build
+  build-path: build
+  docker-user: ${{ secrets.DOCKER_USER }}
+  docker-pass: ${{ secrets.DOCKER_PASS }}
+  docker-registry: ${{ secrets.DOCKER_REGISTRY }}
+  gh-actions-key: ${{ secrets.GH_ACTIONS_DEPLOY_KEY }}
+
+jobs:
+  install-and-build:
+    runs-on:
+      group: roobet-runners
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout shared actions
+        uses: actions/checkout@v4
+        with:
+          ref: v5.2
+          repository: project-atl/gh-actions
+          path: ./.github/gh-actions
+          ssh-key: ${{ env.gh-actions-key }}
+
+      - name: Copy .env template
+        run: |
+          cp .env.template .env
+
+      - name: Node install and build
+        uses: ./.github/gh-actions/actions/node-install-build
+        with:
+          cache-name: node-modules-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+
+      - name: Compress build and node modules
+        run: tar -czf build.tar.gz ${{ env.build-path }} ./node_modules
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifact-name-build }}
+          path: build.tar.gz
+
+  docker-build-push:
+    runs-on:
+      group: roobet-runners
+    outputs:
+      image_sha: ${{ steps.short-sha.outputs.sha }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    needs: [install-and-build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.artifact-name-build }}
+          path: ./
+
+      - name: Extract compressed build and node modules
+        run: tar -xzf build.tar.gz
+
+      - name: Get short SHA
+        id: short-sha
+        run: |
+          echo "sha=`echo ${{ github.sha }} | cut -c1-7`" >> $GITHUB_OUTPUT
+
+      - name: Elastic Container Registry - Build and push
+        uses: ./.github/actions/ecr-build-push
+        with:
+          aws-account: 184689117095
+          aws-region: eu-central-1
+          aws-role: sre-github-prod
+          erc-repo: dev-backend-prod
+          image-tag: ${{ steps.short-sha.outputs.sha }}
+
+  update-cicd-sha:
+    runs-on:
+      group: roobet-runners
+    environment: production_deploy
+    needs: [docker-build-push]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update SHA in the CI/CD repository
+        uses: ./.github/actions/update-cicd-sha
+        with:
+          argo-pat: ${{ secrets.ARGO_PAT }}
+          cicd-branch: main
+          config-repo: project-atl/cicd
+          env-short: prod
+          file-path: charts/backend-apps-prod/values.yaml
+          new-sha: ${{ needs.docker-build-push.outputs.image_sha }}

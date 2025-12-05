@@ -1,0 +1,57 @@
+name: 'Update CI/CD Configuration with Docker SHA'
+description: 'Updates the CI/CD configuration with the new Docker image SHA.'
+
+inputs:
+  file-path:
+    description: 'The path to the file to update'
+    required: true
+  config-repo:
+    description: 'The GitHub repository containing CI/CD configuration'
+    required: true
+  argo-pat:
+    description: 'The personal access token for the ArgoCD repository'
+    required: true
+  new-sha:
+    description: 'The new Docker image SHA'
+    required: true
+  cicd-branch:
+    description: 'Branch to push to in the cicd repo'
+    required: true
+  env-short:
+    description: 'The environment short to find for replace'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Checkout CI/CD configuration repository
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.config-repo }}
+        token: ${{ inputs.argo-pat }}
+        path: cicd-repo/
+        ref: ${{ inputs.cicd-branch }}
+
+    - name: Update the cicd repo with the new SHA
+      run: |
+        cd cicd-repo/
+        NEW_SHA=${{ inputs.new-sha }}
+        FILE_PATH="${{ inputs.file-path }}"
+        ENV_SHORT="${{ inputs.env-short }}"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+        yq e -i ".global.\"${ENV_SHORT}\".container = \"${NEW_SHA}\"" "$FILE_PATH"
+
+        git add "$FILE_PATH"
+        git commit -m "Update image to $NEW_SHA"
+        git push origin ${{ inputs.cicd-branch }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+
+    - name: Cleanup
+      run: |
+        rm -rf cicd-repo/
+      shell: bash

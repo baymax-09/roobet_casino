@@ -1,0 +1,5 @@
+export const GAME_TAG_BLACKJACK_LINK = '/tag/blackjack'
+export const GAME_TAG_FAVORITES_LINK = '/tag/favorites'
+export const GAME_TAG_BACCARAT_LINK = '/tag/baccarat'
+export const GAME_TAG_BONUS_BUYS_LINK = '/tag/bonus-buys'
+export const GAME_TAG_ROULETTE_LINK = '/tag/roulette'

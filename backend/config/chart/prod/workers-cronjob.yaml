@@ -1,0 +1,10 @@
+app:
+  type: cronjob
+  workers:
+    - tpGamesUpdater
+
+tpGamesUpdater:
+  app:
+    additionalConfigs:
+      ONESHOT: true
+    schedule: '*/10 * * * *'

@@ -1,0 +1,6 @@
+**
+!locales
+!build
+!vendors
+!node_modules
+!migrations

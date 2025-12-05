@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: Roobet Available Balances API
+  description: |-
+    Get a list of available balances for the authenticated user.
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com/currency/balances
+tags:
+  - name: get
+    description: Currency API
+paths:
+  /balances:
+    get:
+      tags:
+        - current
+      summary: Currently available balance types
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+
+components:
+  schemas:
+    Result:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          name:
+            type: string
+          shortCode:
+            type: string
+          icon:
+            type: string
+      example:
+        crypto:
+          name: Bitcoin
+          shortCode: BTC
+          icon: /assets/images/balances/crypto.png
+        eth:
+          name: Ethereum
+          shortCode: ETH
+          icon: /assets/images/balances/eth.png
+        cash:
+          name: Cash
+          shortCode: Cash
+          icon: /assets/images/balances/cash.png

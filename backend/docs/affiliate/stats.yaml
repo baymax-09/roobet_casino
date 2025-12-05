@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: Roobet Affiliate Stats API
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+paths:
+  /affiliate/stats:
+    get:
+      description: Get affiliate stats for specified user.
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: User ID to query.
+        - in: query
+          name: startDate
+          schema:
+            type: string
+          required: false
+          description: ISO 8601 date and time string.
+        - in: query
+          name: endDate
+          schema:
+            type: string
+          required: false
+          description: ISO 8601 date and time string.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Number of records to return.
+        - in: query
+          name: gameIdentifier
+          schema:
+            type: string
+          required: false
+          description: Filters stats for unique game identifier.
+        - in: query
+          name: excludedGames
+          schema:
+            type: string - Comma seperated
+          required: false
+          example: dice,mines
+          description: Exclude specific game stats from report.
+
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAffiliateStatsResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JSON Web Token
+  schemas:
+    GetAffiliateStatsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          uid:
+            type: string
+            example: 'a063d5f9-cc44-4c97-b334-8dc69c75c422'
+          username:
+            type: string
+            example: 'MrRoo'
+          wagered:
+            type: number
+            example: 49319.44
+          favoriteGameId:
+            type: string
+            example: 'pragmatic:vs20fruitswroo'
+          favoriteGameTitle:
+            type: string
+            example: 'Roo Bonanza'
+          gameIdentifier:
+            type: string
+            example: 'dice'
+          excludedGames:
+            type: string
+            example: 'diceBet,minesBet'
+
+security:
+  - bearerAuth: []

@@ -1,0 +1,181 @@
+
+stp.png
+size: 1926,1414
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+576x624-Easter-rockets_0000_spaceship5
+  rotate: false
+  xy: 499, 877
+  size: 503, 535
+  orig: 503, 535
+  offset: 0, 0
+  index: -1
+576x624-Easter-rockets_0001_spaceship4
+  rotate: false
+  xy: 469, 299
+  size: 540, 554
+  orig: 540, 554
+  offset: 0, 0
+  index: -1
+576x624-Easter-rockets_0002_spaceship3
+  rotate: false
+  xy: 2, 855
+  size: 495, 557
+  orig: 495, 557
+  offset: 0, 0
+  index: -1
+576x624-Easter-rockets_0003_spaceship2
+  rotate: false
+  xy: 1004, 888
+  size: 504, 524
+  orig: 504, 524
+  offset: 0, 0
+  index: -1
+576x624-Easter-rockets_0004_spaceship1
+  rotate: false
+  xy: 2, 296
+  size: 465, 557
+  orig: 465, 557
+  offset: 0, 0
+  index: -1
+fire/green_fire/short/green_fire_1
+  rotate: true
+  xy: 423, 2
+  size: 137, 413
+  orig: 256, 512
+  offset: 61, 43
+  index: -1
+fire/green_fire/short/green_fire_10
+  rotate: true
+  xy: 1513, 701
+  size: 140, 390
+  orig: 256, 512
+  offset: 59, 53
+  index: -1
+fire/green_fire/short/green_fire_2
+  rotate: true
+  xy: 1011, 756
+  size: 130, 430
+  orig: 256, 512
+  offset: 64, 20
+  index: -1
+fire/green_fire/short/green_fire_3
+  rotate: true
+  xy: 1510, 843
+  size: 134, 396
+  orig: 256, 512
+  offset: 62, 48
+  index: -1
+fire/green_fire/short/green_fire_4
+  rotate: true
+  xy: 1510, 1121
+  size: 144, 411
+  orig: 256, 512
+  offset: 65, 28
+  index: -1
+fire/green_fire/short/green_fire_5
+  rotate: true
+  xy: 1513, 287
+  size: 143, 369
+  orig: 256, 512
+  offset: 70, 63
+  index: -1
+fire/green_fire/short/green_fire_6
+  rotate: true
+  xy: 1266, 28
+  size: 149, 376
+  orig: 256, 512
+  offset: 60, 43
+  index: -1
+fire/green_fire/short/green_fire_7
+  rotate: true
+  xy: 2, 138
+  size: 156, 394
+  orig: 256, 512
+  offset: 49, 20
+  index: -1
+fire/green_fire/short/green_fire_8
+  rotate: true
+  xy: 1144, 179
+  size: 150, 367
+  orig: 256, 512
+  offset: 52, 41
+  index: -1
+fire/green_fire/short/green_fire_9
+  rotate: false
+  xy: 1011, 331
+  size: 142, 423
+  orig: 256, 512
+  offset: 57, 27
+  index: -1
+fire/yellow_fire/short/yellow_fire_1
+  rotate: true
+  xy: 1513, 559
+  size: 140, 390
+  orig: 256, 512
+  offset: 59, 53
+  index: -1
+fire/yellow_fire/short/yellow_fire_10
+  rotate: true
+  xy: 838, 2
+  size: 140, 426
+  orig: 256, 512
+  offset: 59, 17
+  index: -1
+fire/yellow_fire/short/yellow_fire_2
+  rotate: true
+  xy: 2, 2
+  size: 134, 419
+  orig: 256, 512
+  offset: 63, 34
+  index: -1
+fire/yellow_fire/short/yellow_fire_3
+  rotate: true
+  xy: 1513, 432
+  size: 125, 388
+  orig: 256, 512
+  offset: 67, 60
+  index: -1
+fire/yellow_fire/short/yellow_fire_4
+  rotate: true
+  xy: 1510, 979
+  size: 140, 403
+  orig: 256, 512
+  offset: 63, 38
+  index: -1
+fire/yellow_fire/short/yellow_fire_5
+  rotate: true
+  xy: 1510, 1267
+  size: 145, 414
+  orig: 256, 512
+  offset: 66, 24
+  index: -1
+fire/yellow_fire/short/yellow_fire_6
+  rotate: false
+  xy: 1304, 332
+  size: 143, 367
+  orig: 256, 512
+  offset: 69, 56
+  index: -1
+fire/yellow_fire/short/yellow_fire_7
+  rotate: true
+  xy: 398, 141
+  size: 153, 383
+  orig: 256, 512
+  offset: 54, 34
+  index: -1
+fire/yellow_fire/short/yellow_fire_8
+  rotate: true
+  xy: 783, 144
+  size: 153, 359
+  orig: 256, 512
+  offset: 50, 52
+  index: -1
+fire/yellow_fire/short/yellow_fire_9
+  rotate: false
+  xy: 1155, 335
+  size: 147, 419
+  orig: 256, 512
+  offset: 54, 38
+  index: -1

@@ -1,0 +1,27 @@
+global:
+  apm:
+    enabled: true
+  ingress:
+    enabled: true
+    domains:
+      - gandalf.pw
+      - prod.roobet.systems
+    host: shield
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 750m
+      memory: 1Gi
+
+app:
+  name: api-callbacks
+  type: deployment
+
+  ip2location: true
+  replicas: 20
+  service: true
+  paths:
+    - /

@@ -1,0 +1,35 @@
+name: 'Helm Lint'
+description: 'Lints Helm charts'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.12.1
+
+    - name: Run chart-testing
+      uses: helm/chart-testing-action@v2.6.0
+
+    - name: Upgrade ct version
+      run: |
+          wget -q 'https://github.com/helm/chart-testing/releases/download/v3.10.1/chart-testing_3.10.1_linux_amd64.tar.gz'
+          mkdir ct
+          tar -xzf chart-testing_3.10.1_linux_amd64.tar.gz -C ct
+          mv ct/ct /usr/local/bin/
+          rm -rf ct chart-testing_3.10.1_linux_amd64.tar.gz
+      shell: bash
+
+    - name: Lint charts
+      run: |
+        dirs=("stage")
+
+        for dir in ${dirs[@]} ; do
+          for file in $(find config/chart/$dir/*.yaml -type f); do
+            /usr/local/bin/ct lint \
+            --helm-lint-extra-args "--values config/chart/values.yaml --values config/chart/$dir.yaml --values $file" \
+            --target-branch ${{ github.base_ref }} \
+            --charts config/chart/ --validate-maintainers=false
+          done
+        done
+      shell: bash

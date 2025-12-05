@@ -1,0 +1,1 @@
+export { TipTab } from './TipTab'

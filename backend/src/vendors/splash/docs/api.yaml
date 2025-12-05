@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: Roobet Splash Callacks API
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+tags:
+  - name: splash
+    description: Callbacks API
+paths:
+  /splash/verifyUsername:
+    post:
+      tags:
+        - splash
+      description: Verify a username exists on Roobet.com
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  example: MrRoo
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyUsernameResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyUsernameError'
+  /splash/claim:
+    post:
+      tags:
+        - splash
+      description: Claims freespins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  example: MrRoo
+                bonusCode:
+                  type: string
+                  example: BONUS_ONE
+                transactionId:
+                  type: string
+                  example: 51cb3be4-cdf1-4729-91f6-dd68dfb4fa84
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Private key
+  schemas:
+    VerifyUsernameResponse:
+      type: object
+      properties:
+        exists:
+          type: boolean
+          example: true
+    VerifyUsernameError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Parameter 'username' must be a string
+    ClaimResponse:
+      type: object
+      properties:
+        claimed:
+          type: boolean
+          example: true
+    ClaimError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Parameter 'bonusCode' must be a string
+security:
+  - bearerAuth: []

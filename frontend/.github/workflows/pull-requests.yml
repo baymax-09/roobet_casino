@@ -1,0 +1,90 @@
+name: Pull requests
+
+on:
+  pull_request:
+    branches: ['main', 'feature/*']
+
+env:
+  build-path: dist
+  build-cache-key: build-${{ github.sha }}
+
+jobs:
+  tag-build:
+    runs-on:
+      group: roobet-runners
+    environment: staging
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Tag current version and build both targets.
+      - name: Tag and build
+        uses: ./.github/actions/tag-build
+        with:
+          build-cache-key: ${{ env.build-cache-key }}
+          build-path: ${{ env.build-path }}
+          config: ${{ toJSON(vars) }}
+          secrets: ${{ toJSON(secrets) }}
+
+  validate-asset-sizes:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Asset Sizes
+        uses: ./.github/actions/validate-asset-sizes
+
+  lint:
+    runs-on:
+      group: roobet-runners
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup node
+      - name: Setup node
+        uses: ./.github/actions/setup-node
+        with:
+          npm-github-pkg-token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+
+      - name: Run eslint
+        run: |
+          npm run lint:error
+
+      - name: Run prettier
+        run: |
+          npm run format:check
+
+      - name: Run yamllint
+        run: |
+          npm run lint:yaml
+
+      - name: Run typecheck
+        run: |
+          npm run checktypes:ci
+
+      - name: Run test lang keys
+        run: |
+          npm run test:langKeys
+
+  test:
+    runs-on:
+      group: roobet-runners
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup node
+      - name: Setup node
+        uses: ./.github/actions/setup-node
+        with:
+          npm-github-pkg-token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+
+      - name: Run jest
+        run: |
+          npm run test:ci

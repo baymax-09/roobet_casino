@@ -1,0 +1,6 @@
+[submodule "config/k8s/lib"]
+	path = config/k8s/lib
+	url = git@github.com:project-atl/kube-libsonnet
+[submodule "config/k8s/platform-clusters"]
+	path = config/k8s/platform-clusters
+	url = git@github.com:project-atl/platform-clusters.git

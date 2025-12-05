@@ -1,0 +1,8 @@
+export { GameTagsTemplateForm } from './GameTagsRoute/GameTagsTemplate/GameTagsTemplateForm'
+export { GameTagsRoute } from './GameTagsRoute'
+export { GameTagsCreateRoute } from './GameTagsRoute/GameTagsCreateRoute'
+export { GameTagsUpdateRoute } from './GameTagsRoute/GameTagsUpdateRoute/GameTagsUpdateRoute'
+export { TPGamesListRoute } from './TPGamesListRoute'
+export { TPGameBlocksRoute } from './TPGamesBlocksRoute'
+export { GamesManagerRoute } from './GamesManagerRoute/GamesManagerRoute'
+export { TPGameCategoriesRoute } from './TPGamesCategoryRoute'

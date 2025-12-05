@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Roobet Dice API
+  description: |-
+    In our Dice game, a player attempts to roll the dice and successfully generate a number that lands on the user's selected payout range.
+    The user selects a payout chance with the slider:
+    - place bet
+    - Win if number lands in range
+    - Lose if number lands outside range
+
+    Dice varies its own custom difficulties
+    - Moving the slider around will adjust the payout multiplier for better or worse chances of winning
+
+    There are 5 different modes:
+    - 'under': Win if number lands under the target number (`targetNumber`)
+    - 'over': Win if number lands over the target number (`targetNumber`)
+    - 'between': Win if number lands between the target numbers (`targetNumber` and `targetNumberEnd`)
+    - 'outside': Win if number lands outside the target numbers (`targetNumber` and `targetNumberEnd`)
+    - 'between-sets': Win if number lands between either of the 2 target number sets (`targetNumber` and `targetNumberEnd`) and (`targetNumber2` and `targetNumberEnd2`)
+
+    Some useful links:
+    - [Dice on Roobet](https://roobet.com/dice)
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+tags:
+  - name: dice
+    description: Dice API
+paths:
+  /dice/roll:
+    post:
+      tags:
+        - dice
+      summary: Roll a Dice game.
+      description: This endpoint is called when a user places a bet on a dice round. This starts the active game session and creates a bet record. The target numbers should always be in increasing order. e.g. `targetNumber` < `targetNumberEnd` < `targetNumber2` < `targetNumberEnd2`.
+      operationId: roll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientSeed
+                - amount
+                - mode
+                - targetNumber
+                - targetNumberEnd
+                - targetNumber2
+                - targetNumberEnd2
+              properties:
+                clientSeed:
+                  type: string
+                  example: s33d3dgamesrcool
+                amount:
+                  type: number
+                  example: 5
+                mode:
+                  type: string
+                  example: 'under'
+                targetNumber:
+                  type: number
+                  example: 6
+                targetNumberEnd:
+                  type: number
+                  example: 10
+                targetNumber2:
+                  type: number
+                  example: 50
+                targetNumberEnd2:
+                  type: number
+                  example: 55
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiceGame'
+        '405':
+          description: Invalid input
+components:
+  schemas:
+    DiceGame:
+      type: object
+      properties:
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFairInfo:
+          $ref: '#/components/schemas/CurrentRoundProvablyFairInfo'
+        roll:
+          $ref: '#/components/schemas/Roll'
+    ProvablyFairInfo:
+      type: object
+      properties:
+        gameName:
+          type: string
+        nonce:
+          type: number
+        roundOver:
+          type: boolean
+        userId:
+          type: string
+          format: uuid
+        hash:
+          type: string
+    CurrentRoundProvablyFairInfo:
+      type: object
+      properties:
+        newRound:
+          type: boolean
+        currentRound:
+          $ref: '#/components/schemas/ProvablyFairInfo'
+        clientSeed:
+          type: string
+    Bet:
+      type: object
+      properties:
+        balanceType:
+          type: string
+        betAmount:
+          type: number
+    ActiveGame:
+      type: object
+      properties:
+        activeGameId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFairInfo:
+          $ref: '#/components/schemas/CurrentRoundProvablyFairInfo'
+    Roll:
+      type: number

@@ -1,0 +1,1 @@
+export { IPLookupRoute } from './IPLookupRoute'

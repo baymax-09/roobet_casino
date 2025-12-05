@@ -1,0 +1,81 @@
+app:
+  replicas: 1
+  type: deployment
+  workers:
+    - analytics
+    - anomalyDetection
+    - betCloseout
+    - betFeed
+    - blockIoDaemon
+    - cleanup
+    - crash
+    - cryptoPooling
+    - depositQueue
+    - emitScheduledMessage
+    - ethereumConfirmationsQueue
+    - ethereumDeposits
+    - ethereumShallowCopy
+    - ethereumSmartContracts
+    - ethereumTransactionQueue
+    - exchangeRates
+    - gameResolutionQueue
+    - genericFeeds
+    - hotbox
+    - inboundTransactionQueues
+    - migrate
+    - outboundConfirmationQueues
+    - outboundTransactionQueues
+    - pendingOutgoingTransactions
+    - plinko
+    - polygonShallowCopy
+    - poolBlockioDeposits
+    - poolEthDeposits
+    - poolingQueues
+    - rain
+    - reporting
+    - riskJobs
+    - roulette
+    - scheduledEventPublisher
+    - slotPotatoEvent
+    - tronShallowCopy
+    - withdrawWorker
+    - xrpShallowCopy
+
+analytics:
+  global:
+    resources:
+      limits:
+        memory: 6G
+      requests:
+        memory: 6G
+ethereumDeposits:
+  global:
+    resources:
+      limits:
+        memory: 14G
+      requests:
+        cpu: 2000m
+        memory: 14G
+  app:
+    additionalConfigs:
+      ETH_CHUNK_SIZE: "12"
+genericFeeds:
+  global:
+    resources:
+      limits:
+        memory: 5G
+      requests:
+        cpu: 3000m
+        memory: 5G
+inboundTransactionQueues:
+  global:
+    resources:
+      limits:
+        memory: 8G
+      requests:
+        cpu: 2000m
+        memory: 8G
+  app:
+    additionalConfigs:
+      TRON_CHUNK_SIZE: "200"
+    replicas: 2

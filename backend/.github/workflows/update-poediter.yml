@@ -1,0 +1,48 @@
+name: Update POEditor
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+  DEBUG: ${{ github.runner.debug }}
+  DRY_RUN: ${{ github.ref_name != 'main' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: project-atl/poeditor-translation-update-tool
+          path: update-tool
+          token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+
+      - name: Checkout backend repo
+        uses: actions/checkout@v4
+        with:
+          repository: project-atl/backend
+          path: backend
+          token: ${{ secrets.NPM_PGK_GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Stash new and old translations
+        run: |
+          mkdir tmp
+          cp backend/locales/en.json tmp/be_en_current.json
+          cd backend
+          git checkout HEAD~1
+          cd ..
+          cp backend/locales/en.json tmp/be_en_old.json
+
+      - name: Diff translation files and update Poeditor
+        run: |
+          ls -lah
+          cd update-tool
+          npm ci
+          npm run build || true
+          npm run start update-translations-backend 499245

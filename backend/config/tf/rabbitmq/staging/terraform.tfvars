@@ -1,0 +1,5 @@
+endpoint = "https://blue-0.rabbitmq.tekhou5.dev"
+project  = "roobet-staging"
+region   = "europe-west3"
+secret   = "rabbitmq-atlantis-blue-0"
+username = "atlantis"

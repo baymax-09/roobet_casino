@@ -1,0 +1,29 @@
+print("""
+---------------------------------------------------
+✨ Hello from Mr. Roo! I hope you enjoy your day. ✨
+---------------------------------------------------
+""".strip())
+
+docker_compose('./docker-compose.yml')
+docker_build('node:local',
+             context='.',
+             dockerfile='./local/node.Dockerfile',
+             # https://docs.tilt.dev/live_update_reference.html
+             live_update=[
+                sync('./src', '/opt/roobet/src'),
+                run('npm ci', trigger='package.json'),
+                restart_container()
+             ]
+)
+
+dc_resource('api', labels=['app'])
+dc_resource('crash', labels=['app'], auto_init=False)
+
+dc_resource('allworkers', labels=['workers'], auto_init=False)
+dc_resource('specificworker', labels=['workers'], auto_init=False)
+
+dc_resource('redis', labels=['services'])
+dc_resource('mongo', labels=['services'])
+dc_resource('megalo', labels=['services'])
+dc_resource('rethinkdb', labels=['services'])
+

@@ -1,0 +1,29 @@
+global:
+  apm:
+    enabled: true
+  ingress:
+    enabled: true
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+app:
+  name: api-wss
+  type: deployment
+  
+  additionalIngressAnnotations:
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/proxy-read-timeout: 3600
+    nginx.ingress.kubernetes.io/proxy-send-timeout: 3600
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: true
+    nginx.ingress.kubernetes.io/ssl-redirect: false
+  ip2location: true
+  replicas: 5
+  service: true
+  paths:
+    - /socket.io

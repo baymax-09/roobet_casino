@@ -1,0 +1,42 @@
+name: Production redeployer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * 1-5'
+
+env:
+  prod-deploy-env-id: "793200764"
+
+jobs:
+  approve-latest-pending-build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repo at current ref.
+      - name: Approve latest waiting run
+        run: |
+          LATEST=$(curl -L -s \
+              -H "Authorization: Bearer ${{ secrets.GHA_REDEPLOYER_PAT }}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/project-atl/frontend/actions/workflows/production.yml/runs\?per_page=1)
+
+          LATEST_STATUS=$(echo "$LATEST" | jq -r '.workflow_runs[0].status')
+
+          if [[ "$LATEST_STATUS" = "waiting" ]]; then
+            LATEST_ID=$(echo "$LATEST" | jq -r '.workflow_runs[0].id')
+
+            echo "Approving run $LATEST_ID."
+
+            curl -L -s \
+              --X POST \
+              -H "Authorization: Bearer ${{ secrets.GHA_REDEPLOYER_PAT }}"\
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/project-atl/frontend/actions/runs/$LATEST_ID/pending_deployments \
+              -d "{\"environment_ids\":[${{ env.prod-deploy-env-id }}],\"state\":\"approved\",\"comment\":\"Auto deploying 🚀\"}"
+
+            echo "Complete."
+          else
+            echo "No appropriate run found. Latest production workflow is $LATEST_STATUS."
+          fi

@@ -1,0 +1,3 @@
+export const events = {
+  FLAGGED_WITHDRAWAL_CREATED: 'FLAGGED_WITHDRAWAL_CREATED',
+}

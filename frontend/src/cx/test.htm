@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Cellxpert Test Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script async src="//pambet.test/cx/p.js"></script>
+  </head>
+  <body>
+    <h1>This is a testing page.</h1>
+    <p>The <code>p.js</code> file is loaded.</p>
+    <p>
+      Try adding the <code>cxd</code> and <code>cxAffId</code> query string params or click the link below to add a
+      randomized set.
+      <br />
+      <a id="quick_test" href="">Use randomized query string params</a>
+    </p>
+    <p>
+      To use this tracking pixel on your site, add the following code to your page:
+      <p>
+        <code id="dynamicInstruction"></code>
+      </p>
+      You may need to adjust the host in the script <code>src</code> attribute.
+    </p>
+    <script>
+      function makeId(length) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          counter += 1;
+        }
+        return result;
+      }
+      document.getElementById('quick_test').href = `?cxd=${makeId(10)}&cxAffId=${makeId(10)}`;
+      document.getElementById('dynamicInstruction').innerText = document.querySelector('script[src*="/cx/p.js"]').outerHTML;
+    </script>
+  </body>
+</html>

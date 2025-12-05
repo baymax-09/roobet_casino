@@ -1,0 +1,280 @@
+openapi: 3.0.3
+info:
+  title: Roobet Crash API
+  description: |-
+    In our Crash game, a player attempts to achieve the highest payout multiplier before the round is over and the rocket crashes.
+    - place bet
+    - Win if user cashes out at specified multiplier
+    - Lose if the rocket crashes
+
+    Some useful links:
+    - [Crash on Roobet](https://roobet.com/crash)
+  version: 1.0.0
+servers:
+  - url: https://api.roobet.com
+tags:
+  - name: crash
+    description: Crash API
+paths:
+  /crash/joinGame:
+    post:
+      tags:
+        - crash
+      summary: Join a Crash game.
+      description: This endpoint is called when a user places a bet on a Crash round. This starts the active game session and creates a bet record.
+      operationId: joinGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - autoCashout
+              properties:
+                autoCashout:
+                  type: number
+                  example: 25
+                autobet:
+                  type: object
+                  required:
+                    - betAmount
+                    - maxNumberOfBets
+                    - onLossModifier
+                    - onWinModifier
+                    - rolls
+                    - stopOnLoss
+                    - stopOnProfit
+                  example:
+                    betAmount: 5
+                    maxNumberOfBets: 0
+                    onLossModifier: 1
+                    onWinModifier: 0
+                    rolls: 0
+                    stopOnLoss: 0
+                    stopOnProfit: 0
+                  properties:
+                    betAmount:
+                      type: number
+                    maxNumberOfBets:
+                      type: number
+                    onLossModifier:
+                      type: number
+                    onWinModifier:
+                      type: number
+                    rolls:
+                      type: number
+                    stopOnLoss:
+                      type: number
+                    stopOnProfit:
+                      type: number
+                betAmount:
+                  type: number
+                  example: 2
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                example: {
+                  success: true
+                }
+        '405':
+          description: Invalid input
+          content:
+            schema:
+              example: {
+                code: "game__not_taking_bets",
+                message: "This game is currently not taking bets"
+              }
+  /crash/getGameById:
+    get:
+      tags:
+        - crash
+      summary: Get the Crash game round by Id
+      description: Find a record of a Crash round by id
+      operationId: getGameById
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveGame'
+        '405':
+          description: Invalid Game Id
+  /crash/recentNumbers:
+    get:
+      tags:
+        - crash
+      summary: Fetches the list of recent roulette rounds
+      description: Displays the current array list of the recent rounds in the footer of the roulette game board.
+      operationId: recentNumbers
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecentNumbers"
+        '400':
+          description: Invalid status value
+  /crash/getActiveGame:
+    get:
+      tags:
+        - crash
+      summary: Get the current Crash round
+      description: Get the current active Crash round
+      operationId: getActiveGame
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveGame'
+        '405':
+          description: Invalid Game Id
+components:
+  schemas:
+    ActiveGame:
+      description: 'Current game details with bets'
+      type: object
+      required:
+        - bets
+        - game
+      properties:
+        bets:
+          items:
+            type: array,
+            $ref: '#/components/schemas/Bet'
+        game:
+          type: object
+          $ref: '#/components/schemas/Game'
+    RecentNumbers:
+      description: 'Past rounds for Crash'
+      type: object
+      required:
+        - id
+        - crashPoint
+      properties:
+        id:
+          type: string
+        crashPoint:
+          type: number
+    Game:
+      description: 'Current game details'
+      type: object
+      properties:
+        bettingEndTime:
+          type: string
+        crashPoint:
+          type: number
+        createdAt:
+          type: string
+        finalHash:
+          type: string
+        gameName:
+          type: string
+        hash:
+          type: string
+        hashIndex:
+          type: number
+        id:
+          type: string
+        index:
+          type: number
+        maxBet:
+          type: number
+        previousHash:
+          type: string
+        randomNumber:
+          type: number
+        runningMs:
+          type: number
+        runningStartTime:
+          type: string
+        state:
+          type: string
+        countdown:
+          type: object
+          properties:
+            bettingEndTime:
+              type: number
+            runningStartTime:
+              type: number
+    Bet:
+      type: object
+      description: 'bets on the current roulette game'
+      properties:
+        autoCashout:
+          type: number
+        autobet:
+          type: object
+          properties:
+            betAmount:
+              type: number
+            maxNumberOfBets:
+              type: number
+            onLossModifier:
+              type: number
+            onWinModifier:
+              type: number
+            rolls:
+              type: number
+            stopOnLoss:
+              type: number
+            stopOnProfit:
+              type: number
+        balanceType:
+          type: string
+        betAmount:
+          type: number
+        cashoutCrashPoint:
+          type: number
+        closedOut:
+          type: boolean
+        closeoutComplete:
+          type: boolean
+        closeoutTimestamp:
+          type: string
+        deleteAfterRecord:
+          type: boolean
+        gameId:
+          type: string
+        gameIdentifier:
+          type: string
+        gameName:
+          type: string
+        hidden:
+          type: boolean
+        highroller:
+          type: boolean
+        id:
+          type: string
+        incognito:
+          type: boolean
+        payoutValue:
+          type: number
+        profit:
+          type: number
+        timestamp:
+          type: string
+        twoFactor:
+          type: boolean
+        type:
+          type: string
+        user:
+          type: object
+          properties:
+          id:
+            type: string
+          name:
+            type: string
+        userId:
+          type: string
+        won:
+          type: boolean

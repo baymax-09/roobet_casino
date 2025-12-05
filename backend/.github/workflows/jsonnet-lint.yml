@@ -1,0 +1,46 @@
+﻿name: Jsonnet Lint
+
+on:
+  pull_request:
+    paths:
+      - '**.jsonnet'
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on:
+      group: roobet-runners
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Jsonnet
+        run: |
+          sudo apt-get install -y jsonnet
+
+      - name: Lint Modified Jsonnet Files
+        run: |
+          echo "Fetching origin main..."
+          git fetch origin main
+          echo "Fetching done."
+
+          echo -e "\n"
+
+          echo "Running git diff..."
+          FILES=$(git --no-pager diff --name-only --diff-filter=d FETCH_HEAD ${{ github.sha }} | grep "\.jsonnet$" || true)
+          echo "Diff done."
+
+          echo -e "\n"
+
+          if [[ -z "$FILES" ]]; then
+            echo "No .jsonnet files changed."
+            exit 0
+          fi
+
+          echo "Linting files..."
+          for FILE in $FILES; do
+            jsonnetfmt --test "$FILE"
+          done

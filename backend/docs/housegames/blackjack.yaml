@@ -1,0 +1,1028 @@
+openapi: 3.0.3
+
+info:
+  title: Blackjack API
+  description: The API for Blackjack games in the `modules/blackjack/routes/index.ts` file
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+
+paths:
+  /blackjack:
+    post:
+      summary: This endpoint creates a new game of Blackjack with one seat for the requesting player. The player is automatically seated at the table.
+      requestBody:
+        required: false
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request - No Players
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlackjackNoPlayersError"
+        "500":
+          description: Internal Server Error - Missing Game Seed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlackjackMissingGameSeedError"
+
+  /blackjack/active:
+    get:
+      summary: This endpoint returns the current states of all active games for the authenticated user.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientGameState"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlackjackError"
+
+  /blackjack/{gameId}:
+    get:
+      summary: This endpoint returns the current state of the game with the given ID.
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackInvalidGameIdError"
+                  - $ref: "#/components/schemas/BlackjackNonGamePlayerError"
+        "404":
+          description: Not Found - Game Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlackjackGameNotFoundError"
+
+  /blackjack/{gameId}/start:
+    patch:
+      summary: This endpoint starts the game with the given ID. The game must be `pending` and have at least one player seated at the table.
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlackjackStartGameRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackGameNotFoundError"
+                  - $ref: "#/components/schemas/BlackjackInvalidCloseoutError"
+                  - $ref: "#/components/schemas/BlackjackInvalidWagersError"
+                  - $ref: "#/components/schemas/BlackjackMissingPlayerHandError"
+                  - $ref: "#/components/schemas/BlackjackMissingRoundIdError"
+                  - $ref: "#/components/schemas/BlackjackNonGamePlayerError"
+                  - $ref: "#/components/schemas/BlackjackNoUsableWagerError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackAggregateError"
+                  - $ref: "#/components/schemas/BlackjackBadTableDealerError"
+                  - $ref: "#/components/schemas/BlackjackMissingGameHashError"
+                  - $ref: "#/components/schemas/BlackjackSideBetCalculationError"
+
+  /blackjack/{gameId}/hit:
+    post:
+      summary: "This endpoint hits a hand in a game of Blackjack. The game must be in the active state to hit a hand and the hand status must indicate canHit: true, otherwise an error will be returned."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlackjackActionRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackInvalidGameIdError"
+                  - $ref: "#/components/schemas/BlackjackInvalidHandError"
+                  - $ref: "#/components/schemas/BlackjackInvalidActionError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackGameNotFoundError"
+                  - $ref: "#/components/schemas/BlackjackPlayerNotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackAggregateError"
+                  - $ref: "#/components/schemas/BlackjackBadTableDealerError"
+                  - $ref: "#/components/schemas/BlackjackDealerStatusError"
+                  - $ref: "#/components/schemas/BlackjackSideBetCalculationError"
+
+  /blackjack/{gameId}/stand:
+    post:
+      summary: "This endpoint stands a hand in a game of Blackjack. The game must be in the active state to stand a hand and the hand status must indicate canStand: true, otherwise an error will be returned."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlackjackActionRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackInvalidGameIdError"
+                  - $ref: "#/components/schemas/BlackjackInvalidHandError"
+                  - $ref: "#/components/schemas/BlackjackInvalidActionError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackGameNotFoundError"
+                  - $ref: "#/components/schemas/BlackjackPlayerNotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackAggregateError"
+                  - $ref: "#/components/schemas/BlackjackBadTableDealerError"
+                  - $ref: "#/components/schemas/BlackjackDealerStatusError"
+                  - $ref: "#/components/schemas/BlackjackSideBetCalculationError"
+
+  /blackjack/{gameId}/double-down:
+    post:
+      summary: "This endpoint doubles down a hand in a game of Blackjack. The game must be in the active state to double down a hand and the hand status must indicate canDoubleDown: true, otherwise an error will be returned."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlackjackActionRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackInvalidGameIdError"
+                  - $ref: "#/components/schemas/BlackjackInvalidHandError"
+                  - $ref: "#/components/schemas/BlackjackInvalidActionError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackGameNotFoundError"
+                  - $ref: "#/components/schemas/BlackjackPlayerNotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackAggregateError"
+                  - $ref: "#/components/schemas/BlackjackBadTableDealerError"
+                  - $ref: "#/components/schemas/BlackjackDealerStatusError"
+                  - $ref: "#/components/schemas/BlackjackSideBetCalculationError"
+
+  /blackjack/{gameId}/insure:
+    post:
+      summary: "This endpoint insures a hand in a game of Blackjack. The game must be in the active state to insure a hand and the hand status must indicate canInsure: true, otherwise an error will be returned."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlackjackInsureRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackInvalidGameIdError"
+                  - $ref: "#/components/schemas/BlackjackInvalidHandError"
+                  - $ref: "#/components/schemas/BlackjackInvalidActionError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackGameNotFoundError"
+                  - $ref: "#/components/schemas/BlackjackPlayerNotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackAggregateError"
+                  - $ref: "#/components/schemas/BlackjackBadTableDealerError"
+                  - $ref: "#/components/schemas/BlackjackDealerStatusError"
+                  - $ref: "#/components/schemas/BlackjackSideBetCalculationError"
+
+  /blackjack/{gameId}/split:
+    post:
+      summary: "This endpoint splits a hand in a game of Blackjack. The game must be in the active state to split a hand and the hand status must indicate canSplit: true, otherwise an error will be returned."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlackjackActionRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGameState"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackInvalidGameIdError"
+                  - $ref: "#/components/schemas/BlackjackInvalidHandError"
+                  - $ref: "#/components/schemas/BlackjackInvalidActionError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackGameNotFoundError"
+                  - $ref: "#/components/schemas/BlackjackPlayerNotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BlackjackAggregateError"
+                  - $ref: "#/components/schemas/BlackjackBadTableDealerError"
+                  - $ref: "#/components/schemas/BlackjackDealerStatusError"
+                  - $ref: "#/components/schemas/BlackjackSideBetCalculationError"
+
+components:
+  schemas:
+    ClientGameState:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          $ref: "#/components/schemas/GameStatus"
+        players:
+          $ref: "#/components/schemas/Table"
+    BlackjackStartGameRequest:
+      type: object
+      properties:
+        seats:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlayerSeatRequest"
+    BlackjackActionRequest:
+      type: object
+      properties:
+        handIndex:
+          type: number
+    BlackjackInsureRequest:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackActionRequest"
+        - type: object
+          properties:
+            accept:
+              type: boolean
+    PlayerSeatRequest:
+      type: object
+      properties:
+        playerId:
+          type: string
+        seatIndex:
+          description: The players chosen index of the seat at the table
+          type: number
+          nullable: true
+        wagers:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserHandMainWager"
+    Table:
+      type: array
+      items:
+        $ref: "#/components/schemas/PlayerSeat"
+    PlayerSeat:
+      type: object
+      properties:
+        playerId:
+          type: string
+        betId:
+          type: string
+          nullable: true
+        seatIndex:
+          description: The chosen index of the seat at the table, or omitted if the UX didn't send one at game start.
+          type: number
+          nullable: true
+        hands:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hand"
+    Hand:
+      type: object
+      properties:
+        wager:
+          allOf:
+            - $ref: "#/components/schemas/UserHandMainWager"
+            - type: object
+              nullable: true
+        cards:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlayerCard"
+        status:
+          $ref: "#/components/schemas/HandStatus"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/HandActions"
+    HandActions:
+      oneOf:
+        - $ref: "#/components/schemas/HandActionDeal"
+        - $ref: "#/components/schemas/HandActionHit"
+        - $ref: "#/components/schemas/HandActionDoubleDown"
+        - $ref: "#/components/schemas/HandActionSplit"
+        - $ref: "#/components/schemas/HandActionStand"
+        - $ref: "#/components/schemas/HandActionInsurance"
+    HandActionDeal:
+      allOf:
+        - $ref: "#/components/schemas/BaseHandAction"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "deal"
+    BaseHandAction:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/HandActionType"
+        timestamp:
+          type: string
+          format: date-time
+        shoeIndex:
+          type: number
+    HandActionHit:
+      allOf:
+        - $ref: "#/components/schemas/BaseHandAction"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "hit"
+            shoeIndex:
+              type: number
+    HandActionDoubleDown:
+      allOf:
+        - $ref: "#/components/schemas/BaseHandAction"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "double-down"
+            shoeIndex:
+              type: number
+    HandActionSplit:
+      allOf:
+        - $ref: "#/components/schemas/BaseHandAction"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "split"
+            splitTo:
+              type: number
+            splitFrom:
+              type: number
+    HandActionStand:
+      allOf:
+        - $ref: "#/components/schemas/BaseHandAction"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "stand"
+    HandActionInsurance:
+      allOf:
+        - $ref: "#/components/schemas/BaseHandAction"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "insurance"
+            accept:
+              type: boolean
+    HandActionType:
+      type: string
+      enum:
+        - 0: "Deal"
+        - 1: "Hit"
+        - 2: "Stand"
+        - 3: "Double Down"
+        - 4: "Split"
+        - 6: "Insurance"
+    HandStatus:
+      type: object
+      properties:
+        value:
+          type: number
+        isHard:
+          type: boolean
+        isSoft:
+          type: boolean
+        isBust:
+          type: boolean
+        isBlackjack:
+          type: boolean
+        canHit:
+          type: boolean
+        canStand:
+          type: boolean
+        canInsure:
+          type: boolean
+        canSplit:
+          type: boolean
+        canDoubleDown:
+          type: boolean
+        splitFrom:
+          type: number
+          nullable: true
+        wasDoubled:
+          type: boolean
+        outcome:
+          $ref: "#/components/schemas/HandOutcomeType"
+    PlayerCard:
+      allOf:
+        - $ref: "#/components/schemas/Card"
+        - type: object
+          properties:
+            hidden:
+              type: boolean
+    Card:
+      type: object
+      properties:
+        suit:
+          $ref: "#/components/schemas/CardSuitType"
+        value:
+          $ref: "#/components/schemas/CardValueType"
+    CardSuitType:
+      type: string
+      enum:
+        - "hearts"
+        - "diamonds"
+        - "clubs"
+        - "spades"
+        - "hidden"
+    CardValueType:
+      type: number
+      enum:
+        - 0: Hidden
+        - 1: Ace
+        - 2: Two
+        - 3: Three
+        - 4: Four
+        - 5: Five
+        - 6: Six
+        - 7: Seven
+        - 8: Eight
+        - 9: Nine
+        - 10: Ten
+        - 10.1: Jack
+        - 10.2: Queen
+        - 10.3: King
+        - 11: Ace
+    BaseUserHandWager:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/HandWagerType"
+        amount:
+          type: number
+    BaseUserSideWager:
+      allOf:
+        - $ref: "#/components/schemas/BaseUserHandWager"
+        - type: object
+          properties:
+            outcome:
+              $ref: "#/components/schemas/WagerOutcomeType"
+    UserHandMainWager:
+      allOf:
+        - $ref: "#/components/schemas/BaseUserHandWager"
+        - type: object
+          properties:
+            handIndex:
+              type: number
+            type:
+              type: string
+              enum:
+                - "main"
+            sides:
+              nullable: true
+              type: array
+              items:
+                $ref: "#/components/schemas/UserHandWagers"
+    UserHandWagers:
+      oneOf:
+        - $ref: "#/components/schemas/UserHandInsuranceWager"
+        - $ref: "#/components/schemas/UserHandPerfectPairsWager"
+        - $ref: "#/components/schemas/UserHand21Plus3Wager"
+    UserHandInsuranceWager:
+      allOf:
+        - $ref: "#/components/schemas/BaseUserSideWager"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "insurance"
+    UserHandPerfectPairsWager:
+      allOf:
+        - $ref: "#/components/schemas/BaseUserSideWager"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "perfect-pair"
+    UserHand21Plus3Wager:
+      allOf:
+        - $ref: "#/components/schemas/BaseUserSideWager"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - "twenty-one-plus-three"
+    HandWagerType:
+      type: string
+      enum:
+        - "main"
+        - "insurance"
+        - "perfect-pair"
+        - "twenty-one-plus-three"
+    WagerOutcomeType:
+      type: string
+      enum:
+        - "win"
+        - "lose"
+        - "draw"
+        - "unknown"
+    HandOutcomeType:
+      type: string
+      enum:
+        - "win"
+        - "lose"
+        - "push"
+        - "unknown"
+    GameStatus:
+      type: string
+      enum:
+        - "pending"
+        - "active"
+        - "complete"
+        - "rejected"
+    BlackjackErrorCodes:
+      type: string
+      enum:
+        - "blackjack__error_active_wager_update"
+        - "blackjack__error_aggregate"
+        - "blackjack__error_already_insure_wager"
+        - "blackjack__error_bad_table_dealer"
+        - "blackjack__error_dealer_without_status"
+        - "blackjack__error_double_down_wager"
+        - "blackjack__error_game_incomplete"
+        - "blackjack__error_game_missing_dealer"
+        - "blackjack__error_game_missing_hash"
+        - "blackjack__error_game_missing_user_round"
+        - "blackjack__error_game_missing_user_rounds"
+        - "blackjack__error_game_missing_user_seat"
+        - "blackjack__error_game_missing_users"
+        - "blackjack__error_game_not_found"
+        - "blackjack__error_game_still_active"
+        - "blackjack__error_game_shoe_exhausted"
+        - "blackjack__error_game_too_old"
+        - "blackjack__error_insure_wager"
+        - "blackjack__error_invalid_action"
+        - "blackjack__error_invalid_game_id"
+        - "blackjack__error_invalid_hand"
+        - "blackjack__error_invalid_wagers"
+        - "blackjack__error_missing_game_hash"
+        - "blackjack__error_missing_game_seed"
+        - "blackjack__error_missing_player_hand"
+        - "blackjack__error_missing_round_id"
+        - "blackjack__error_mutex"
+        - "blackjack__error_no_active_wager"
+        - "blackjack__error_no_players"
+        - "blackjack__error_no_usable_wager"
+        - "blackjack__error_non_game_player"
+        - "blackjack__error_player_not_found"
+        - "blackjack__error_side_bet_calculation"
+        - "blackjack__error_split_wager"
+        - "blackjack__error_upsert_failure"
+        - "blackjack__error_wager_nsf"
+        - "blackjack__error"
+    BlackjackError:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/BlackjackErrorCodes"
+        message:
+          type: string
+          description: A human-readable, localized message describing the error.
+    BlackjackAggregateError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_aggregate"
+              enum:
+                - "blackjack__error_aggregate"
+            errors:
+              type: array
+              items:
+                $ref: "#/components/schemas/BlackjackError"
+    BlackjackGameNotFoundError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_game_not_found"
+              enum:
+                - "blackjack__error_game_not_found"
+    BlackjackInvalidGameIdError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_invalid_game_id"
+              enum:
+                - "blackjack__error_invalid_game_id"
+    BlackjackPlayerNotFoundError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_player_not_found"
+              enum:
+                - "blackjack__error_player_not_found"
+    BlackjackNoPlayersError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_no_players"
+              enum:
+                - "blackjack__error_no_players"
+    BlackjackInvalidHandError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_invalid_hand"
+              enum:
+                - "blackjack__error_invalid_hand"
+    BlackjackMissingRoundIdError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_missing_round_id"
+              enum:
+                - "blackjack__error_missing_round_id"
+    BlackjackSideBetCalculationError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_side_bet_calculation"
+              enum:
+                - "blackjack__error_side_bet_calculation"
+    BlackjackBadTableDealerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_bad_table_dealer"
+              enum:
+                - "blackjack__error_bad_table_dealer"
+    BlackjackDealerStatusError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_dealer_without_status"
+              enum:
+                - "blackjack__error_dealer_without_status"
+    BlackjackNonGamePlayerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_non_game_player"
+              enum:
+                - "blackjack__error_non_game_player"
+    BlackjackMissingPlayerHandError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_missing_player_hand"
+              enum:
+                - "blackjack__error_missing_player_hand"
+    BlackjackMissingGameHashError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_missing_game_hash"
+              enum:
+                - "blackjack__error_missing_game_hash"
+    BlackjackMissingGameSeedError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_missing_game_seed"
+              enum:
+                - "blackjack__error_missing_game_seed"
+    BlackjackGameShoeExhaustedError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_game_shoe_exhausted"
+              enum:
+                - "blackjack__error_game_shoe_exhausted"
+    BlackjackInvalidActionError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_invalid_action"
+              enum:
+                - "blackjack__error_invalid_action"
+    BlackjackInvalidWagersError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_invalid_wagers"
+              enum:
+                - "blackjack__error_invalid_wagers"
+    BlackjackNoUsableWagerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_no_usable_wager"
+              enum:
+                - "blackjack__error_no_usable_wager"
+    BlackjackNoActiveWagerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_no_active_wager"
+              enum:
+                - "blackjack__error_no_active_wager"
+    BlackjackActiveWagerUpdateError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_active_wager_update"
+              enum:
+                - "blackjack__error_active_wager_update"
+    BlackjackSplitWagerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_split_wager"
+              enum:
+                - "blackjack__error_split_wager"
+    BlackjackInsureWagerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_insure_wager"
+              enum:
+                - "blackjack__error_insure_wager"
+    BlackjackDoubleDownWagerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: "blackjack__error_double_down_wager"
+              enum:
+                - "blackjack__error_double_down_wager"
+    BlackjackAlreadyInsuredWagerError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: blackjack__error_already_insure_wager
+              enum:
+                - "blackjack__error_already_insure_wager"
+    BlackjackInsufficientFundsError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: blackjack__error_wager_nsf
+              enum:
+                - "blackjack__error_wager_nsf"
+    BlackjackInvalidCloseoutError:
+      allOf:
+        - $ref: "#/components/schemas/BlackjackError"
+        - type: object
+          properties:
+            code:
+              type: string
+              default: blackjack__invalid_closeout
+              enum:
+                - "blackjack__invalid_closeout"

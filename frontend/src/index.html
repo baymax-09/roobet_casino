@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <!-- Google Tag Manager -->
+    <script async>
+      ;(function (w, d, s, l, i) {
+        w[l] = w[l] || []
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : ''
+        j.defer = true
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+        f.parentNode.insertBefore(j, f)
+      })(window, document, 'script', 'dataLayer', 'GTM-563FCQS')
+    </script>
+    <!-- End Google Tag Manager -->
+    <!-- Seon Fingerprinting Agent-->
+    <script async src="https://cdn.seondf.com/js/v4/agent.js"></script>
+    <!-- End Seon Fingerprinting Agent-->
+    <!-- PaymentIQ Script -->
+    <script async type=text/javascript src='https://static.paymentiq.io/cashier/cashier.js'></script>
+    <!-- End PaymentIQ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link href="https://fonts.googleapis.com/" rel="preconnect" crossorigin />
+    <link href="https://api.roobet.com" rel="preconnect" crossorigin />
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin />
+    <title>Roobet | Crypto's Fastest Growing Casino</title>
+    <base href="/" />
+    <meta name="theme-color" content="#191b31" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+      #loader {
+        background: #191939;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      #loader.ready {
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      .spinner {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: conic-gradient(#0000 1%,#EEAF0E) content-box;
+        -webkit-mask: repeating-conic-gradient(#0000 0deg,#000 1deg 39deg,#0000 40deg 45deg),
+              radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 calc(100% - 9px));
+        -webkit-mask-composite: destination-in;
+        mask-composite: intersect;
+        animation: spinner 1s infinite steps(8);
+      }
+
+      .roo {
+        position: absolute;
+        width: 40px;
+        height: 50px;
+      }
+
+      @keyframes spinner {
+        to {
+            transform: rotate(1turn);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-563FCQS"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div id="root"></div>
+    <div id="modalRoot"></div>
+    <div id="paymentiq-cashier"></div>
+    <div id="loader">
+      <img class="roo" src="/images/Roo.svg" alt="Roo" />
+      <div class="spinner">
+      </div>
+    </div>
+  </body>
+  <script
+    defer
+    type="text/javascript"
+    src="https://2b4a9aa5-31c9-4186-a6c3-0f53d37328dd.snippet.antillephone.com/apg-seal.js"
+  ></script>
+  <script
+    defer
+    type="text/javascript"
+    src="https://b6fbd907-6224-495b-891d-cd23b3e29488.seals-xcm.certria.com/xcm-seal.js"
+  ></script>
+</html>

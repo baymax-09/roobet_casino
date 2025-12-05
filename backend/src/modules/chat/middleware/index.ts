@@ -1,0 +1,1 @@
+export { chatModMiddleware } from './chatModMiddleware'

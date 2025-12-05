@@ -1,0 +1,239 @@
+version: '3.9'
+
+volumes:
+  mongo-data: null
+  megalo-data: null
+  redis-data: null
+  rethinkdb-data: null
+
+networks:
+  default:
+    name: roobet-dev
+
+services:
+  datadog:
+    container_name: datadog
+    image: gcr.io/datadoghq/agent:7
+    restart: always
+    ports:
+      - 8126:8126/tcp
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_APM_ENABLED: true
+      DD_APM_NON_LOCAL_TRAFFIC: true
+      DD_ENV: ${DD_ENV}
+      DD_HOSTNAME: pambet.test
+      DD_IGNORE_AUTOCONF: true
+      DD_SITE: datadoghq.eu
+      DD_LOGS_ENABLED: false
+      DD_PROCESS_AGENT_ENABLED: false
+      DD_USE_DOGSTATSD: false
+      DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED: false
+      DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED: false
+    tmpfs:
+      - /etc/datadog-agent/conf.d
+
+  dnsmasq:
+    container_name: roobet-dns
+    image: jpillora/dnsmasq
+    platform: linux/x86_64
+    restart: always
+    ports:
+      - 53:53/udp
+      - 5380:8080
+    volumes:
+      - ./local/config/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+
+  proxy:
+    container_name: roobet-proxy
+    image: haproxytech/haproxy-alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./local/config/haproxy/:/usr/local/etc/haproxy/:ro
+
+  mongo:
+    container_name: roobet-mongo
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongosh --quiet) -eq 1
+      interval: 10s
+      timeout: 30s
+      start_period: 30s
+      start_interval: 1s
+    hostname: mongo
+    image: mongo:7
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    command:
+      - --replSet
+      - rs0
+      - --port
+      - '27017'
+      - --bind_ip_all
+  megalo:
+    container_name: roobet-megalo
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongosh --quiet) -eq 1
+      interval: 5s
+      timeout: 30s
+      start_period: 30s
+      start_interval: 1s
+    hostname: mongo
+    image: mongo:7
+    ports:
+      - 27018:27017
+    restart: always
+    volumes:
+      - megalo-data:/data/db
+    command:
+      - --replSet
+      - rs0
+      - --port
+      - '27017'
+      - --bind_ip_all
+
+  redis:
+    image: redis:alpine
+    container_name: roobet-redis
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis-data:/data
+    restart: always
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  redis-secondary:
+    image: redis:alpine
+    container_name: roobet-redis-secondary
+    ports:
+      - ${REDIS_SECONDARY_PORT}:6379
+    volumes:
+      - redis-data:/data-secondary
+    restart: always
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    container_name: 'roobet-rabbitmq'
+    hostname: rabbitmq
+    healthcheck:
+      test: ['CMD', 'wget', '-O', '/dev/null', 'http://localhost:15672']
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      - ./config/rabbitmq:/etc/rabbitmq/conf.d/
+
+  rabbitmq-definitions:
+    build: ./config/rabbitmq
+    container_name: 'rabbitmq-definitions'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: always
+    volumes:
+      - ./config:/config/
+    command:
+      - sh
+      - -c
+      - |
+        cd /config/tf/rabbitmq/dev
+
+        terraform init
+        terraform apply -auto-approve -var="endpoint=http://rabbitmq:15672"
+
+        while inotifywait -e create -e delete -e modify -r /config/tf/rabbitmq; do
+          terraform init
+          terraform apply -auto-approve -var="endpoint=http://rabbitmq:15672"
+        done
+
+  rethinkdb:
+    platform: linux/x86_64
+    image: rethinkdb:latest
+    container_name: roobet-rethinkdb
+    ports:
+      - 28015:${RETHINKDB_PORT}
+      - 8080:8080
+    volumes:
+      - rethinkdb-data:/data
+    restart: always
+    healthcheck:
+      disable: true
+      #test: echo "r = require('rethinkdb'); r.db('rethinkdb').table('current_issues').count().eq(0)" | node
+      #interval: 10s
+      #timeout: 10s
+      #retries: 3
+
+  api: &node-base
+    image: node:local
+    container_name: roobet-backend
+    # remove once everyone is on Tilt
+    profiles:
+      - node
+    command: npm run dev:base
+    ports:
+      - 3003:3003
+    volumes:
+      - /opt/roobet/node_modules
+      - ./src/modules/graphql-api/generated/:/opt/roobet/src/modules/graphql-api/generated/
+      - ~/.aws:/home/node/.aws:ro
+    working_dir: /opt/roobet
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      MONGODB_URI: mongodb://mongo:27017/roobet
+      MEGALOMONGO_URI: mongodb://mongo:27018/roobet_megalo
+      REDIS_HOST: redis
+      RETHINKDB_HOST: rethinkdb
+      WORKER: x
+      NPM_CONFIG_PREFIX: /opt/roobet/.npm-global
+    depends_on:
+      - redis
+      - rethinkdb
+      - mongo
+      - megalo
+      - rabbitmq
+
+  specificworker:
+    <<: *node-base
+    container_name: roobet-specificworker
+    ports: []
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      MONGODB_URI: mongodb://mongo:27017/roobet
+      MEGALOMONGO_URI: mongodb://mongo:27018/roobet_megalo
+      REDIS_HOST: redis
+      RETHINKDB_HOST: rethinkdb
+      WORKER: crash
+      NPM_CONFIG_PREFIX: /opt/roobet/.npm-global
+
+    depends_on:
+      - api
+
+  allworkers:
+    <<: *node-base
+    container_name: roobet-allworkers
+    ports: []
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      MONGODB_URI: mongodb://mongo:27017/roobet
+      MEGALOMONGO_URI: mongodb://mongo:27018/roobet_megalo
+      REDIS_HOST: redis
+      RETHINKDB_HOST: rethinkdb
+      NPM_CONFIG_PREFIX: /opt/roobet/.npm-global
+    depends_on:
+      - specificworker
+      - api

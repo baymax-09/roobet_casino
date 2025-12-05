@@ -1,0 +1,8 @@
+.gitattributes !filter !diff
+.gitignore !filter !diff
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+/ipdb.bin filter=lfs diff=lfs merge=lfs -text
+/ipGeo.bin filter=lfs diff=lfs merge=lfs -text
+/ipProxy.bin filter=lfs diff=lfs merge=lfs -text
+* !text !filter !merge !diff

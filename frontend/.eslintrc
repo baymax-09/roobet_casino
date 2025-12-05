@@ -1,0 +1,218 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:i18next/recommended",
+    "plugin:react-i18n/all",
+    "standard-with-typescript",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/strict",
+    "plugin:jsx-a11y/recommended",
+    "prettier" // disables rules that conflict with Prettier
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+  "plugins": [
+    "i18next",
+    "react-i18n",
+    "unused-imports",
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "jsx-a11y"
+  ],
+  "ignorePatterns": ["src/vendors/**/*", "src/**/*.stories.tsx"],
+  "globals": {
+    "api": true,
+    "gtag": true,
+    "arraysEqual": true,
+    "JSX": "readonly"
+  },
+  "rules": {
+    // Localization
+    // options differ from plugin:i18next/recommended.
+    "i18next/no-literal-string": [
+      "error",
+      { "ignoreCallee": ["translate", "t"], "onlyAttribute": ["children"] }
+    ],
+    // This currently conflicts with how we use i18n to localize JSX.
+    "jsx-a11y/anchor-has-content": "off",
+
+    // React (not included in plugin:react/recommended)
+    "react/jsx-curly-brace-presence": [
+      2,
+      { "props": "never", "children": "never", "propElementValues": "always" }
+    ],
+    "react/jsx-filename-extension": [2, { "extensions": [".tsx"] }],
+    "react/no-multi-comp": [2, { "ignoreStateless": true }],
+
+    // Bespoke, reconsider later
+    "no-console": ["error", { "allow": ["warn", "error", "assert"] }],
+    "@typescript-eslint/naming-convention": "off",
+    "id-length": [
+      "error",
+      { "exceptions": ["_", "r", "a", "b", "i", "j", "x", "y", "t", "p", "m"] }
+    ],
+    "no-implicit-coercion": ["error", { "allow": ["!!", "~"] }],
+    "unused-imports/no-unused-imports": "error",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          ["builtin", "external"],
+          ["internal", "object"],
+          ["parent", "sibling", "index"],
+          ["type"]
+        ],
+        "pathGroups": [
+          {
+            "pattern": "{**/*.,./*.,./}{styles,scss}",
+            "group": "index",
+            "position": "after"
+          }
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/consistent-type-exports": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@material-ui/styles"],
+            "message": "Please use @material-ui/core(or @material-ui/core/styles if necessary)"
+          }
+        ]
+      }
+    ],
+
+    // Rules in an eslint-config we are extending that we are disabling until they can be addressed.
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/prefer-optional-chain": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/promise-function-async": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/no-confusing-void-expression": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/await-thenable": "off",
+    "@typescript-eslint/no-throw-literal": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/no-unsafe-enum-comparison": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "off",
+    "prefer-promise-reject-errors": "off",
+    "react/no-string-refs": "off",
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "react/jsx-key": "off",
+    "no-var": "off",
+    "jsx-a11y/no-autofocus": "warn",
+    "jsx-a11y/no-static-element-interactions": [
+      "warn",
+      {
+        "allowExpressionValues": true,
+        "handlers": [
+          "onClick",
+          "onMouseDown",
+          "onMouseUp",
+          "onKeyPress",
+          "onKeyDown",
+          "onKeyUp"
+        ]
+      }
+    ],
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/interactive-supports-focus": [
+      "warn",
+      {
+        "tabbable": [
+          "button",
+          "checkbox",
+          "link",
+          "searchbox",
+          "spinbutton",
+          "switch",
+          "textbox"
+        ]
+      }
+    ],
+    "jsx-a11y/no-noninteractive-element-interactions": [
+      "warn",
+      {
+        "handlers": [
+          "onClick",
+          "onError",
+          "onLoad",
+          "onMouseDown",
+          "onMouseUp",
+          "onKeyPress",
+          "onKeyDown",
+          "onKeyUp"
+        ],
+        "alert": ["onKeyUp", "onKeyDown", "onKeyPress"],
+        "body": ["onError", "onLoad"],
+        "dialog": ["onKeyUp", "onKeyDown", "onKeyPress"],
+        "iframe": ["onError", "onLoad"],
+        "img": ["onError", "onLoad"]
+      }
+    ],
+    "jsx-a11y/label-has-associated-control": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["src/admin/**/*"],
+      "rules": {
+        "i18next/no-literal-string": "off"
+      }
+    },
+    {
+      "files": ["src/app/routes/CrashRoute/**"],
+      "rules": {
+        "no-multi-assign": "off"
+      }
+    },
+    {
+      "files": ["src/**.d.ts"],
+      "rules": {
+        "init-declarations": "off"
+      }
+    },
+    {
+      // We don't want to apply Jest linting to all files
+      "files": ["**/*.test.ts", "**/test/**/*", "**/tests/**/*"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "parserOptions": {
+        "project": ["./tsconfig.jest.json"]
+      },
+      "rules": {
+        "no-console": "off",
+        // While I understand the implications of conditional expects, this conflicts with the style of our main test writer.
+        "jest/no-conditional-expect": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/internal-regex": "^(app|common|admin|mrooi|assets)(/|$)",
+    "react": {
+      "version": "detect"
+    }
+  }
+}

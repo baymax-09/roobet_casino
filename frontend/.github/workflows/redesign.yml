@@ -1,0 +1,52 @@
+name: Redesign
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feature/redesign']
+
+env:
+  build-path: dist
+  build-cache-key: build-redesign-${{ github.sha }}
+
+jobs:
+  tag-build:
+    runs-on:
+      group: roobet-runners
+    environment: production
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Tag current version and build both targets.
+      - name: Tag and build
+        uses: ./.github/actions/tag-build
+        with:
+          build-cache-key: ${{ env.build-cache-key }}
+          build-path: ${{ env.build-path }}
+          config: ${{ toJSON(vars) }}
+          secrets: ${{ toJSON(secrets) }}
+
+  app-cloudflare-pages-redesign-push:
+    needs: [tag-build]
+    runs-on:
+      group: roobet-runners
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Publish both targets to CF Pages.
+      - id: cloudflare-pages-push
+        name: Cloudflare Pages Push
+        uses: ./.github/actions/cloudflare-pages-push
+
+        with:
+          build-cache-key: ${{ env.build-cache-key }}
+          build-path: ${{ env.build-path }}
+          product-pages-name: roobet-redesign-product
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

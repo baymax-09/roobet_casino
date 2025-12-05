@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Roobet Tipping API
+  version: 1.0.0
+servers:
+  - url: https://roobet.com/_api/tipping
+paths:
+  /send:
+    post:
+      summary: Tip user via Roobet API
+      description: Used to tip users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: The userId of the user making the request.
+                toUserName:
+                  type: string
+                  description: The username of the user you are tipping.
+                toUserId:
+                  type: string
+                  description: The userId of the user you are tipping.
+                amount:
+                  type: number
+                  description: The amount you are tipping in USD.
+                showInChat:
+                  type: boolean
+                  description: If you would like the tip to show up in chat.
+                balanceType:
+                  type: string
+                  description: The balance you would like to use for the for the tip. Only one balance type is required.
+                  example: crypto, eth, ltc, usdt, usdc, xrp, trx, doge
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates whether the operation was successful.
+              examples:
+                Success:
+                  value:
+                    success: true
+                    detail: Tip successful
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code.
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                Failure:
+                  value:
+                    code: invalid_amount
+                    message: Invalid amount.
+                    detail: no amount was supplied in the request, tip failed.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JSON Web Token
+
+security:
+  - bearerAuth: []

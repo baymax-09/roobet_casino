@@ -1,0 +1,552 @@
+openapi: 3.0.3
+info:
+  title: Roobet Account API
+  description: |-
+    Get the user data in our account router
+  version: 1.0.0
+servers:
+  - url: http://api.pambet.test/account
+tags:
+  - name: get
+    description: Account API
+paths:
+  /get:
+    get:
+      tags:
+        - account
+      summary: shows current user data
+      description: This endpoint is called when a user loads onto our domain
+      operationId: startGame
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        '405':
+          description: Invalid input
+
+components:
+  schemas:
+    Result:
+      type: object
+      properties:
+        admin:
+          type: boolean
+          example: true
+        affiliateUnpaid:
+          type: number
+          example: 0
+        authNonce:
+          type: number
+          example: 0
+        balance:
+          type: number
+          example: 1000000
+        balances:
+          $ref: '#/components/schemas/Balances'
+        betGoal:
+          type: number
+          example: 0
+        cashBalance:
+          type: number
+          example: 2000
+        cashBetGoal:
+          type: number
+          example: 0
+        chatMessages:
+          type: number
+          example: 0
+        countryCode:
+          type: string
+          example: 'en'
+        createdAt:
+          type: string
+          example: '2022-11-29T17:20:41.736Z'
+        domain:
+          type: string
+          example: 'com'
+        email:
+          type: string
+          example: 'roman@roobet.com'
+        emailVerified:
+          type: boolean
+          example: true
+        ethBalance:
+          type: number
+          example: 15
+        ethBetGoal:
+          type: number
+          example: 0
+        exchangeRates:
+          $ref: '#/components/schemas/ExchangeRates'
+        hiddenSportsTotalBet:
+          type: number
+          example: 1000
+        hiddenSportsTotalBets:
+          type: number
+          example: 27
+        hiddenSportsTotalWon:
+          type: number
+          example: 3725
+        hiddenTotalBet:
+          type: number
+          example: 206026
+        hiddenTotalBets:
+          type: number
+          example: 1343
+        hiddenTotalDeposited:
+          type: number
+          example: 1000
+        hiddenTotalDeposits:
+          type: number
+          example: 2
+        hiddenTotalWithdrawn:
+          type: number
+          example: 50000
+        hiddenTotalWon:
+          type: number
+          example: 2111.84
+        id:
+          type: string
+          example: 'e57c4c2e-7132-4414-bd76-aa81c7b48938'
+        invalidLoginAttempts:
+          type: number
+          example: 0
+        kyc:
+          $ref: '#/components/schemas/KYC'
+        kycLevel:
+          type: number
+          example: 4
+        kycRequiredLevel:
+          type: number
+          example: 0
+        lastBet:
+          type: string
+          example: '2023-01-04T19:26:49.498Z'
+        lastLogin:
+          type: string
+          example: '2023-01-04T20:03:41.094Z'
+        level:
+          type: number
+          example: 0
+        locale:
+          type: string
+          example: 'en'
+        ltcBalance:
+          type: number
+          example: 10.99
+        ltcBetGoal:
+          type: number
+          example: 0
+        mod:
+          type: boolean
+          example: true
+        mode:
+          type: string
+          example: 'dev'
+        mutes:
+          type: object
+        name:
+          type: string
+          example: 'Admin'
+        nameLowercase:
+          type: string
+          example: 'admin'
+        newAccount:
+          type: boolean
+          example: false
+        offerDeposited:
+          type: number
+          example: 0
+        offerDeposits:
+          type: number
+          example: 0
+        officer:
+          type: boolean
+          example: true
+        promosClaimed:
+          type: number
+          example: 0
+        refCount:
+          type: number
+          example: 0
+        referralEarnings:
+          type: number
+          example: 0
+        security:
+          $ref: '#/components/schemas/Security'
+        selectedBalanceType:
+          type: string
+          example: 'eth'
+        socketToken:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
+        systemSettings:
+          $ref: '#/components/schemas/SystemSettings'
+        totalDeposited:
+          type: number
+          example: 25001
+        totalDeposits:
+          type: number
+          example: 5
+        totalTipped:
+          type: number
+          example: 5
+        totalTipsReceived:
+          type: number
+          example: 0
+        totalWithdrawn:
+          type: number
+          example: 20000
+        totalWon:
+          type: number
+          example: 500000
+        twofactorEnabled:
+          type: boolean
+          example: true
+        twofactorEnabledAt:
+          type: string
+          example: '2022-12-28T19:57:04.415Z'
+        user_hash:
+          type: string
+          example: 'ac1a0a0f172b7e54cef7ddeb4fc56117d6922bc95fd7d4e33ec5760a268f99b4'
+
+    Balances:
+      type: object
+      properties:
+        cash:
+          type: number
+          example: 2000
+        crypto:
+          type: number
+          example: 25000
+        eth:
+          type: number
+          example: 15
+        ltc:
+          type: number
+          example: 10.99
+        selectedBalanceType:
+          type: string
+          example: 'eth'
+
+    ExchangeRates:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          rate:
+            type: number
+          symbol:
+            type: string
+      example:
+        mxn:
+          rate: 19.4
+          symbol: MX$
+        cad:
+          rate: 1.3
+          symbol: C$
+
+    KYC:
+      type: object
+      properties:
+        addressCity:
+          type: string
+          example: 'City'
+        addressCountry:
+          type: string
+          example: 'Canada'
+        addressLine1:
+          type: string
+          example: '15 King street'
+        addressLine2:
+          type: string
+          example: ''
+        addressPostalCode:
+          type: string
+          example: 'L7R 4T6'
+        addressState:
+          type: string
+          example: 'Ontario'
+        createdAt:
+          type: string
+          example: '2023-01-04T17:08:25.607Z'
+        dob:
+          type: string
+          example: '2000-09-10T17:08:25.607Z'
+        firstName:
+          type: string
+          example: 'Admin'
+    Security:
+      type: object
+      properties:
+        facebookName:
+          type: string
+          example: null
+        googleName:
+          type: string
+          example: null
+        has2fa:
+          type: boolean
+          example: true
+        hasFacebook:
+          type: boolean
+          example: false
+        hasGoogle:
+          type: boolean
+          example: false
+        hasPassword:
+          type: boolean
+          example: true
+        needsSecurity:
+          type: boolean
+          example: false
+
+    SystemSettings:
+      type: object
+      properties:
+        app:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 0
+        bets:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        bitcoininstantdeposit:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: false
+        bitcoinwithdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: false
+        chat:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        coinswitchwithdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        crash:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 1
+        deposit:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        dice:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 1
+        ethereumwithdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        fairness:
+          type: object
+          properties:
+            clientSeed:
+              type: string
+              example: 'changeThisSeed'
+        faucet:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        feed:
+          type: object
+          properties:
+            incognito:
+              type: boolean
+              example: true
+        id:
+          type: string
+          example: '543f11d1-318e-4f81-8ad7-0a58807e3012'
+        instantdeposit:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: false
+        litecoinwithdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        mines:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 1
+        music:
+          type: object
+          properties:
+            volume:
+              type: number
+              example: 1
+        payopwithdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        plinko:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 1
+        precredit:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        profile:
+          type: object
+          properties:
+            editiable:
+              type: object
+              properties:
+                bio:
+                  type: string
+                  example: ''
+                discord:
+                  type: string
+                  example: ''
+                maskSensitiveData:
+                  type: boolean
+                  example: false
+                showProfileInfo:
+                  type: boolean
+                  example: true
+                showBio:
+                  type: boolean
+                  example: true
+                showChart:
+                  type: boolean
+                  example: true
+                showDiscord:
+                  type: boolean
+                  example: true
+                showRefCount:
+                  type: boolean
+                  example: true
+                showTotalWon:
+                  type: boolean
+                  example: true
+                showTwitter:
+                  type: boolean
+                  example: true
+                twitter:
+                  type: string
+                  example: ''
+        roobetlive:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        roulette:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 1
+        softswiss:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        stats:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        surveys:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        temwithdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        tip:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        tips:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+        towers:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            volume:
+              type: number
+              example: 1
+        withdraw:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              example: true

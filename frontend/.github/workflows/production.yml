@@ -1,0 +1,82 @@
+name: Production
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main']
+
+env:
+  build-path: dist
+  build-cache-key: build-production-${{ github.sha }}
+
+jobs:
+  tag-build:
+    runs-on:
+      group: roobet-runners
+    environment: production
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Tag current version and build both targets.
+      - name: Tag and build
+        uses: ./.github/actions/tag-build
+        with:
+          build-cache-key: ${{ env.build-cache-key }}
+          build-path: ${{ env.build-path }}
+          config: ${{ toJSON(vars) }}
+          secrets: ${{ toJSON(secrets) }}
+
+  app-cloudflare-pages-production-push:
+    needs: [tag-build]
+    runs-on:
+      group: roobet-runners
+    environment: production_deploy
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Publish both targets to CF Pages.
+      - id: cloudflare-pages-push
+        name: Cloudflare Pages Push
+        uses: ./.github/actions/cloudflare-pages-push
+
+        with:
+          build-cache-key: ${{ env.build-cache-key }}
+          build-path: ${{ env.build-path }}
+          product-pages-name: roobet-product
+          acp-pages-name: roobet-acp
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+  s3-bucket-prod-push:
+    name: S3 Bucket Push
+    needs: [tag-build]
+    runs-on:
+      group: roobet-runners
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      # Checkout repo at current ref.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Publish to S3 Bucket
+      - id: s3-bucket-push
+        name: S3 Bucket Push
+        uses: ./.github/actions/aws-bucket-push
+        with:
+          aws-account: 184689117095
+          aws-region: eu-central-1
+          aws-role: sre-github-prod
+          s3-bucket-name-product: roobet-dev-frontend-prod-product
+          s3-bucket-name-acp: roobet-dev-frontend-prod-acp
+          build-path: ${{ env.build-path }}
+          build-cache-key: ${{ env.build-cache-key }}
+          cloudfront-distribution-id-acp: E37OJ4EEOORGIY
+          cloudfront-distribution-id-product: E26ETQPXPWTILL

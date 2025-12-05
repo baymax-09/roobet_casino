@@ -1,0 +1,1 @@
+export { BuyCryptoTab } from './BuyCryptoTab'

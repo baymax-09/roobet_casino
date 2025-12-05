@@ -1,0 +1,113 @@
+.colorsBets {
+  width: 100%;
+}
+
+.ColorsBetsContainer {
+  flex: 1;
+  min-height: 125px;
+  > div {
+    &::-webkit-scrollbar {
+      width: 0px;
+    }
+  }
+}
+
+.emptyBets {
+  font-size: 18px;
+  font-weight: 300;
+  color: #e1e1e1;
+  text-align: center;
+  margin-top: 25px;
+}
+
+.colorsBet {
+  will-change: auto;
+  height: 30px;
+
+  font-size: 14px !important;
+  line-height: 24px !important;
+  font-weight: 500 !important;
+  color: #e1e1e1 !important;
+  .betChoice {
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      height: 25px;
+      width: 25px;
+    }
+  }
+  .name {
+    cursor: pointer;
+    font-size: 14px;
+    &.hidden {
+      font-style: italic;
+      cursor: default;
+    }
+  }
+
+  &.lost {
+    .back {
+      .wagerAmount {
+        color: #da736b;
+      }
+    }
+  }
+
+  .front,
+  .back {
+    backface-visibility: hidden;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 30px;
+  }
+  .back {
+    display: none;
+  }
+
+  &.won,
+  &.lost {
+    .front {
+      display: none;
+    }
+    .back {
+      display: flex;
+    }
+  }
+
+  .flipper {
+    position: relative;
+  }
+
+  &.won {
+    .back {
+      .wagerAmount {
+        color: #61af5a;
+      }
+    }
+  }
+}
+
+.name {
+  flex: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.cashout {
+  flex: 1;
+  color: #fff;
+  opacity: 0.5;
+}

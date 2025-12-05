@@ -1,0 +1,35 @@
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+{{- if $Values.global.ingress.enabled -}}
+
+{{- range $Values.global.ingress.domains -}}
+{{- $Values := mergeOverwrite (deepCopy $Values) (dict "domain" .) -}}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "app.lowerName" $Values }}-{{ . }}
+  annotations:
+    {{- include "app.ingressAnnotations" $Values | indent 4 }}
+  labels:
+    {{- include "app.labels" $Values | nindent 4 }}
+spec:
+  ingressClassName: {{ $Values.global.ingress.className }}
+  rules:
+    - host: {{ $Values.global.ingress.host }}.{{ $Values.domain }}
+      http:
+        paths:
+          {{- include "app.ingressPaths" $Values }}
+  {{- if contains "roobet.systems" $Values.domain }}
+  tls:
+    - hosts:
+      - {{ $Values.global.ingress.host }}.{{ $Values.domain }}
+      secretName: {{ template "app.lowerName" $Values }}-tls
+  {{- end }}
+
+---
+
+{{ end }}
+
+{{ end }}
+{{- end }}

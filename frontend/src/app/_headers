@@ -1,0 +1,10 @@
+/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'self' https://*.clevernt.com https://*.cleverwebserver.com https://*.cleverhttp.com;
+  X-XSS-Protection: 1; mode=block
+
+/resources/crash_*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none';
+  X-XSS-Protection: 1; mode=block
+  Cache-Control: no-store, no-cache, must-revalidate

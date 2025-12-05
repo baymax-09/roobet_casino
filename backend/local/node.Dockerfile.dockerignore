@@ -1,0 +1,11 @@
+**
+!package*.json
+!yarn.lock
+!locales
+!build
+!artifacts
+!src
+!vendors
+!.babelrc
+!.env
+!.npmrc

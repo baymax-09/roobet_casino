@@ -1,0 +1,33 @@
+global:
+  apm:
+    enabled: true
+  ingress:
+    enabled: true
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 2Gi
+
+app:
+  name: api-callbacks
+  type: deployment
+  
+  ip2location: true
+  replicas: 2
+  service: true
+  paths:
+    - /astropay/depositUpdate
+    - /astropay/withdrawUpdate
+    - /fasttrack/callback
+    - /paymentiq
+    - /playngo/callback
+    - /poeditor/callback
+    - /pragmatic/callback
+    - /slotegrator/callback
+    - /softswiss/play
+    - /totalProcessing/depositUpdate
+    - /totalProcessing/withdrawUpdate

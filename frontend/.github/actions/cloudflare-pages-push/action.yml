@@ -1,0 +1,72 @@
+name: Cloudflare Pages Push
+description: Push built UIs to Cloudflare Pages projects
+inputs:
+  product-pages-name:
+    required: false
+    default: ''
+    description: CF Pages Project names for the Product build
+  acp-pages-name:
+    required: false
+    default: ''
+    description: CF Pages Project names for the ACP build
+  build-path:
+    required: true
+    description: Location of build files
+  build-cache-key:
+    required: true
+    description: Name of cache key for sharing build files
+  cloudflare-api-token:
+    required: true
+    description: Cloudflare Pages publish token
+  cloudflare-account-id:
+    required: true
+    description: Cloudflare account ID
+  github-token:
+    required: true
+    description: GHA secret token
+  branch:
+    required: false
+    description: Which ref to use for deployment
+    default: ${{ github.head_ref }}
+outputs:
+  product-url:
+    description: Cloudflare Pages publish URL for Product
+    value: ${{ steps.push-product.outputs.url }}
+  acp-url:
+    description: Cloudflare Pages publish URL for ACP
+    value: ${{ steps.push-acp.outputs.url }}
+runs:
+  using: composite
+  steps:
+    # Download cached build
+    - name: Download build from cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.build-path }}
+        key: ${{ inputs.build-cache-key }}
+
+    # Push Product code to CF Pages.
+    - id: push-product
+      name: Publish Product to Cloudflare Pages
+      if: ${{ inputs.product-pages-name != '' }}
+      uses: cloudflare/pages-action@v1.4.0
+      with:
+        apiToken: ${{ inputs.cloudflare-api-token }}
+        accountId: ${{ inputs.cloudflare-account-id }}
+        projectName: ${{ inputs.product-pages-name }}
+        directory: ${{ inputs.build-path }}/product
+        gitHubToken: ${{ inputs.github-token }}
+        branch: ${{ inputs.branch }}
+
+    # Push ACP code to CF Pages.
+    - id: push-acp
+      name: Publish ACP to Cloudflare Pages
+      if: ${{ inputs.acp-pages-name != '' }}
+      uses: cloudflare/pages-action@v1.4.0
+      with:
+        apiToken: ${{ inputs.cloudflare-api-token }}
+        accountId: ${{ inputs.cloudflare-account-id }}
+        projectName: ${{ inputs.acp-pages-name }}
+        directory: ${{ inputs.build-path }}/acp
+        gitHubToken: ${{ inputs.github-token }}
+        branch: ${{ inputs.branch }}

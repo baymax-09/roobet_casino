@@ -1,0 +1,145 @@
+{
+  "rockets": {
+    "default": {
+      "background": "/images/games/crash/background-2.png",
+      "skins": [
+        "/images/games/crash/rockets/default/default_rocket_1.png",
+        "/images/games/crash/rockets/default/default_rocket_2.png",
+        "/images/games/crash/rockets/default/default_rocket_3.png",
+        "/images/games/crash/rockets/default/default_rocket_4.png",
+        "/images/games/crash/rockets/default/default_rocket_5.png"
+      ],
+      "emitter": {
+        "lifetime": {
+          "min": 0.7,
+          "max": 0.9
+        },
+        "frequency": 0.001,
+        "emitterLifetime": 0,
+        "maxParticles": 500,
+        "addAtBack": false,
+        "pos": {
+          "x": 0,
+          "y": 0
+        },
+        "behaviors": [
+          {
+            "type": "alpha",
+            "config": {
+              "alpha": {
+                "list": [
+                  {
+                    "value": 0.62,
+                    "time": 0
+                  },
+                  {
+                    "value": 0,
+                    "time": 1
+                  }
+                ],
+                "isStepped": false
+              }
+            }
+          },
+          {
+            "type": "moveSpeed",
+            "config": {
+              "speed": {
+                "list": [
+                  {
+                    "value": 300,
+                    "time": 0
+                  },
+                  {
+                    "value": 250,
+                    "time": 0.7
+                  },
+                  {
+                    "value": 250,
+                    "time": 1
+                  }
+                ],
+                "isStepped": true
+              },
+              "minMult": 1
+            }
+          },
+          {
+            "type": "scale",
+            "config": {
+              "scale": {
+                "list": [
+                  {
+                    "value": 0.19,
+                    "time": 0
+                  },
+                  {
+                    "value": 0.2,
+                    "time": 1
+                  }
+                ],
+                "isStepped": false
+              },
+              "minMult": 1
+            }
+          },
+          {
+            "type": "color",
+            "config": {
+              "color": {
+                "list": [
+                  {
+                    "value": "fff191",
+                    "time": 0
+                  },
+                  {
+                    "value": "ff622c",
+                    "time": 0.6
+                  },
+                  {
+                    "value": "111111",
+                    "time": 0.8
+                  },
+                  {
+                    "value": "333333",
+                    "time": 1
+                  }
+                ],
+                "isStepped": false
+              }
+            }
+          },
+          {
+            "type": "rotation",
+            "config": {
+              "accel": 0,
+              "minSpeed": 50,
+              "maxSpeed": 50,
+              "minStart": 70,
+              "maxStart": 90
+            }
+          },
+          {
+            "type": "textureRandom",
+            "config": {
+              "textures": ["/images/textures/particle.png", "/images/textures/fire.png"]
+            }
+          },
+          {
+            "type": "spawnShape",
+            "config": {
+              "type": "torus",
+              "data": {
+                "x": 0,
+                "y": 0,
+                "radius": 5,
+                "innerRadius": 0,
+                "affectRotation": false
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{{- if eq $.Values.app.type "deployment" }}
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+  labels:
+    {{- include "app.labels" $Values | nindent 4 }}
+spec:
+  replicas: {{ $Values.app.replicas }}
+  selector:
+    matchLabels:
+      {{- include "app.labels" $Values | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- if $Values.global.metrics.enabled }}
+          {{- include "app.metricsAnnotations" $Values | nindent 8 }}
+        {{- end }}
+        helmChart: backend
+      labels:
+        {{- include "app.labels" $Values | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ template "app.lowerName" $Values }}
+        image: {{ $Values.global.image.repository}}:{{ template "app.tag" $Values }}
+        imagePullPolicy: {{ $Values.global.image.pullPolicy }}
+        envFrom:
+          - configMapRef:
+              name: {{ template "app.lowerName" $Values }}
+          - secretRef:
+              name: {{ template "app.lowerName" $Values }}
+        {{- if $Values.global.livenessProbe.enabled }}
+        livenessProbe:
+          failureThreshold: {{ $Values.global.livenessProbe.settings.failureThreshold }}
+          initialDelaySeconds: {{ $Values.global.livenessProbe.settings.initialDelaySeconds }}
+          periodSeconds: {{ $Values.global.livenessProbe.settings.periodSeconds }}
+          successThreshold: {{ $Values.global.livenessProbe.settings.successThreshold }}
+          timeoutSeconds: {{ $Values.global.livenessProbe.settings.timeoutSeconds }}
+          httpGet:
+            path: {{ $Values.global.livenessProbe.health.path }}
+            port: {{ $Values.global.livenessProbe.health.port }}
+            scheme: {{ $Values.global.livenessProbe.health.scheme }}
+        {{- end }}
+        {{- if $Values.global.readinessProbe.enabled }}
+        readinessProbe:
+          failureThreshold: {{ $Values.global.readinessProbe.settings.failureThreshold }}
+          initialDelaySeconds: {{ $Values.global.readinessProbe.settings.initialDelaySeconds }}
+          periodSeconds: {{ $Values.global.readinessProbe.settings.periodSeconds }}
+          successThreshold: {{ $Values.global.readinessProbe.settings.successThreshold }}
+          timeoutSeconds: {{ $Values.global.readinessProbe.settings.timeoutSeconds }}
+          httpGet:
+            path: {{ $Values.global.readinessProbe.health.path }}
+            port: {{ $Values.global.readinessProbe.health.port }}
+            scheme: {{ $Values.global.readinessProbe.health.scheme }}
+        {{- end }}
+        resources:
+          limits:
+            memory: {{ $Values.global.resources.limits.memory }}
+          requests:
+            cpu: {{ $Values.global.resources.requests.cpu }}
+            memory: {{ $Values.global.resources.requests.memory }}
+        ports:
+          - name: traffic
+            containerPort: {{ $Values.global.port }}
+            protocol: TCP
+        {{- if $Values.app.ip2location }}
+        volumeMounts:
+          - name: {{ $Values.global.ip2location.name }}
+            mountPath: {{ $Values.global.ip2location.path }}
+        {{- end }}
+      {{- if $Values.app.ip2location }}
+      volumes:
+        - name: {{ $Values.global.ip2location.name }}
+          persistentVolumeClaim:
+            claimName: {{ template "ip2location.name" $Values }}
+      {{- end }}
+
+---
+{{ end }}
+{{- end }}

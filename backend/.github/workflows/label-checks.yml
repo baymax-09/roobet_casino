@@ -1,0 +1,16 @@
+name: Label Checks
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened, labeled, unlabeled]
+
+jobs:
+  do-not-merge:
+    if: ${{ contains(github.event.*.labels.*.name, 'do not merge') }}
+    name: Do Not Merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for label
+        run: |
+          echo "Pull request is labeled as 'do not merge'"
+          exit 1

@@ -1,0 +1,73 @@
+{{- if eq $.Values.app.type "cronjob" }}
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+  labels:
+    {{- include "app.labels" $Values | nindent 4 }}
+spec:
+  concurrencyPolicy: "Replace"
+  failedJobsHistoryLimit: {{ $Values.global.cron.history.failure }}
+  schedule: {{ $Values.app.schedule | quote }}
+  successfulJobsHistoryLimit:  {{ $Values.global.cron.history.success }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ $Values.global.cron.retries }}
+      template:
+        metadata:
+          labels:
+            {{- include "app.labels" $Values | nindent 12 }}
+        spec:
+          {{- if $Values.global.serviceAccount.enabled }}
+          serviceAccountName: {{ template "app.lowerName" $Values }}
+          {{- end }}
+          containers:
+            - name: {{ template "app.lowerName" $Values }}
+              image: {{ $Values.global.image.repository}}:{{ template "app.tag" $Values }}
+              imagePullPolicy: Always
+              {{- if $Values.app.command }}
+              command: {{ $Values.app.command }}
+              {{- end }}
+              envFrom:
+              - configMapRef:
+                  name: {{ template "app.lowerName" $Values }}
+              - secretRef:
+                  name: {{ template "app.lowerName" $Values }}
+              {{- if or ($Values.app.scripts) ($Values.app.pvc) }}
+              volumeMounts:
+                {{ range $key, $val := $Values.app.scripts -}}
+                - name: {{ $key | replace "." "-" }}
+                  mountPath: {{ $val }}/{{ $key }}
+                  subPath: {{ $key }}
+                {{- end }}
+                {{- if ($Values.app.pvc) }}
+                - name: {{ $Values.app.name }}
+                  mountPath: {{ $Values.app.pvc.path }}
+                {{- end }}
+              {{- end }}
+          {{- if or ($Values.app.scripts) ($Values.app.pvc) }}
+          volumes:
+            {{ range $key, $val := $Values.app.scripts -}}
+            - name: {{ $key | replace "." "-" }}
+              configMap:
+                defaultMode: 500
+                name: {{ template "app.lowerName" $Values }}-scripts
+            {{- end }}
+            {{- if ($Values.app.pvc) }}
+            - name: {{ $Values.app.name }}
+              persistentVolumeClaim:
+                claimName: {{ template "app.lowerName" $Values }}
+            {{- end }}
+          {{- end }}
+        {{- if (eq 0 (int $Values.global.cron.retries)) }}
+          restartPolicy: Never
+        {{- else }}
+          restartPolicy: OnFailure
+        {{- end }}
+
+---
+{{- end }}
+{{- end }}

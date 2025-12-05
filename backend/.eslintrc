@@ -1,0 +1,126 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "standard-with-typescript",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/strict",
+    "prettier" // disables rules that conflict with Prettier
+  ],
+  "ignorePatterns": ["**/generated/**"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.eslint.json"]
+  },
+  "plugins": ["unused-imports", "@typescript-eslint", "eslint-plugin-node"],
+  "env": {
+    "es2020": true,
+    "node": true,
+    "amd": true
+  },
+  "rules": {
+    // Rules that DO NOT override an eslint-config we are extending.
+    "no-console": "error",
+    "no-implicit-coercion": ["error", { "allow": ["!!", "~"] }],
+    "no-implicit-globals": "error",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["winston", "!**/*/winston"],
+            "message": "Please use scopedLogger instead."
+          }
+        ]
+      }
+    ],
+
+    // Rules that override an eslint-config we are extending but we want for now.
+    "@typescript-eslint/no-unused-vars": "off", // so that unused-imports will work
+    "id-length": [
+      "warn",
+      { "exceptions": ["_", "r", "a", "b", "i", "j", "x", "y"] }
+    ],
+
+    // Rules in an eslint-config we are extending that we are disabling until they can be addressed.
+    "eqeqeq": "warn",
+    "prefer-promise-reject-errors": "off",
+    "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/promise-function-async": "off",
+    "@typescript-eslint/await-thenable": "off",
+    "@typescript-eslint/require-await": "off",
+    "n/no-callback-literal": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/prefer-optional-chain": "off",
+    "@typescript-eslint/no-base-to-string": "off",
+    "@typescript-eslint/no-throw-literal": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/prefer-reduce-type-parameter": "off",
+    "@typescript-eslint/method-signature-style": "off",
+    "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
+    "no-var": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-duplicate-type-constituents": "off",
+    "@typescript-eslint/no-unsafe-enum-comparison": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "off"
+  },
+  "overrides": [
+    {
+      // These are the scary files, be careful with auto-fixes here...
+      "files": ["src/*.ts", "src/game/**", "src/runners/**", "src/system/**"],
+      "rules": {
+        "no-multi-assign": "off",
+        "no-console": "off",
+        "import/first": "off"
+      }
+    },
+    {
+      // Hoping this file will be deleted one day so not going to mess around in here
+      "files": ["src/types/rethinkdbdash.d.ts"],
+      "rules": {
+        "@typescript-eslint/adjacent-overload-signatures": "off",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/unified-signatures": "off"
+      }
+    },
+    {
+      // Files in /scripts require a different parser
+      "files": ["scripts/**/*.ts"],
+      "parserOptions": {
+        "project": ["./scripts/tsconfig.scripts.json"]
+      }
+    },
+    {
+      // We don't want to apply Jest linting to all files
+      "files": ["**/*.test.ts", "**/test/**/*", "**/tests/**/*"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "parserOptions": {
+        "project": ["./tsconfig.jest.json"]
+      },
+      "rules": {
+        "no-console": "off",
+        // While I understand the implications of conditional expects, this conflicts with the style of our main test writer.
+        "jest/no-conditional-expect": "off",
+        "@typescript-eslint/consistent-type-assertions": "warn"
+      }
+    }
+  ]
+}

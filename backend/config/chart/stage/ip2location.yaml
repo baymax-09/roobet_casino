@@ -1,0 +1,37 @@
+global:
+  configs: null
+  image:
+    repository: 461710506523.dkr.ecr.eu-central-1.amazonaws.com/dev-alpine-non-prod
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+  secrets: null
+  serviceAccount:
+    enabled: true
+    resources: '["deployments"]'
+    verbs: '["get", "list", "patch", "update", "watch"]'
+
+app:
+  name: ip2location
+  type: cronjob
+  
+  additionalConfigs:
+    BASEURL: https://www.ip2location.com/download
+    DATA_DIR: /data
+    ISO3166_2_URL: https://www.ip2location.com/downloads/ip2location-iso3166-2.zip
+  additionalSecrets:
+    - IP2LOCATION_TOKEN
+  command: '["/bin/sh", "-c", "/opt/bin/ip2location.sh"]'
+  image:
+    tag: stage
+  pvc:
+    accessMode: ReadWriteMany
+    class: efs-dynamic
+    path: /data
+    size: 1Gi
+  schedule: '@weekly'
+  scripts:
+    ip2location.sh: /opt/bin

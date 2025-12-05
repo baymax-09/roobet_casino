@@ -1,0 +1,23 @@
+name: Reset Staging Environment to main Branch
+
+on:
+  schedule:
+    # This cron job runs at 10:00Z every Monday.
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+
+jobs:
+  reset-staging:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'staging'
+          fetch-depth: 0
+
+      - name: Reset staging branch to main
+        run: |
+          git reset --hard origin/main
+          git push --force

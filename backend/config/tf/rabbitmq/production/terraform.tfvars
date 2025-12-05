@@ -1,0 +1,5 @@
+endpoint = "https://red-0.rabbitmq.tekhou5.dev"
+project  = "roobet-snoop"
+region   = "europe-west3"
+secret   = "rabbitmq-atlantis-red-0"
+username = "atlantis"

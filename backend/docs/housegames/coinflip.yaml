@@ -1,0 +1,314 @@
+openapi: 3.0.3
+info:
+  title: Coinflip API
+  description: API for managing coinflip games in the modules/coinflip/routes/index.ts file
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+paths:
+  /coinflip/start:
+    post:
+      summary: Start a new coinflip game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                clientSeed:
+                  type: string
+                amount:
+                  type: number
+                guess:
+                  type: string
+                count:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  coinflipDataArray:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CoinflipData'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /coinflip/fetchUserActiveGames:
+    get:
+      summary: Fetch active coinflip games for the user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoinflipGame'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /coinflip/fetchOtherActiveGames:
+    post:
+      summary: Fetch active coinflip games for other users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pageNumberStr:
+                  type: string
+                  pattern: '^[0-9]+$'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoinflipGame'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /coinflip/fetchUserGames:
+    post:
+      summary: Fetch all coinflip games for the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pageNumberStr:
+                  type: string
+                  pattern: '^[0-9]+$'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoinflipGame'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    /coinflip/summonBot:
+      post:
+        summary: Summon a bot to play a coinflip game
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: integer
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                    coinFlipGame:
+                      $ref: '#/components/schemas/CoinflipGame'
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+  /coinflip/joinGame:
+    post:
+      summary: Join a coinflip game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                clientSeed:
+                  type: string
+                gameId:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  bet:
+                    $ref: '#/components/schemas/Bet'
+                  provablyFair:
+                    $ref: '#/components/schemas/ProvablyFairInfo'
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /coinflip/dismissGame:
+    post:
+      summary: Dismiss a coinflip game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /coinflip/dismissAllGames:
+    post:
+      summary: Dismiss all coinflip games
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /coinflip/refundGame:
+    post:
+      summary: Refund a coinflip game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  gameId:
+                    type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CoinflipData:
+      type: object
+      properties:
+        newGameId:
+          type: integer
+        bet:
+          $ref: '#/components/schemas/Bet'
+        provablyFair:
+          $ref: '#/components/schemas/ProvablyFairInfo'
+    CoinflipGame:
+      type: object
+      properties:
+        _id:
+          type: string
+        userIdAuthor:
+          type: string
+        amount:
+          type: number
+        guessAuthor:
+          type: string
+        status:
+          type: string
+        userdIdCompetitor:
+          type: string
+        outcome:
+          type: string
+        dismissedAuthor:
+          type: boolean
+        dismissedCompetitor:
+          type: boolean
+        betIdByAuthor:
+          type: string
+        betIdByCompetitor:
+          type: string
+        clientSeed:
+          type: string
+        createdAt:
+          type: string
+        roundId:
+          type: string
+        roundHash:
+          type: string
+        nonce: number
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

@@ -1,0 +1,32 @@
+{{- range .Values.app.workers | default (list $.Values.app.name) -}}
+{{- $Values := mergeOverwrite (deepCopy $.Values) (index $.Values .) (dict "app" (dict "name" .)) -}}
+{{- if $Values.global.serviceAccount.enabled -}}
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+rules:
+  - apiGroups: ["apps", "extensions", "external-secrets.io"]
+    resources: {{ $Values.global.serviceAccount.resources }}
+    verbs: {{ $Values.global.serviceAccount.verbs }}
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "app.lowerName" $Values }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "app.lowerName" $Values }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "app.lowerName" $Values }}
+
+{{ end }}
+{{- end }}

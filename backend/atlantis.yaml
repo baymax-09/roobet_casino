@@ -1,0 +1,28 @@
+---
+version: 3
+
+parallel_apply: true
+parallel_plan: false
+
+projects:
+  - name: rabbitmq-production
+    autoplan:
+      when_modified: ["../**"]
+    dir: config/tf/rabbitmq/production
+    workflow: rabbitmq
+    workspace: rabbitmq-production
+
+  - name: rabbitmq-staging
+    autoplan:
+      when_modified: ["../**"]
+    dir: config/tf/rabbitmq/staging
+    workflow: rabbitmq
+    workspace: rabbitmq-staging
+
+workflows:
+  rabbitmq:
+    plan:
+      steps:
+        - init:
+            extra_args: ["-upgrade"]
+        - plan
